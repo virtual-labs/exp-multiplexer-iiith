@@ -2,4 +2,3 @@ This module explains how to build a 4 X 1 Multiplexer.In electronics, a multiple
 
 <img  src="images/mux4.png">
 
-Position vector 
