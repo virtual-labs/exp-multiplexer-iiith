@@ -28,6 +28,7 @@ Larger multiplexers are also common and requires ceil(log2(n)) selector pins for
 **Truth Table** 
 
 |S<sub>1</sub>  S<sub>0</sub> | x<sub>3</sub> x<sub>2</sub> x<sub>1</sub> x<sub>0</sub> | y |
+|-----------------------------|---------------------------------------------------------|---|
 |      0           0          |       x             x             x             0       | 0 |
 |      0           0          |       x             x             x             1       | 1 |
 |      0           1          |       x             x             0             x       | 0 |
