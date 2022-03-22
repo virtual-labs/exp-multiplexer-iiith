@@ -11,7 +11,6 @@ function clearFAs() {
     fullAdder = {};
 }
 
-
 // {output-id: [gate,pos]}
 let finalOutputs = {
     "Output-5": [],
@@ -236,7 +235,7 @@ function simulateFA() {
         }
     }
 
-    for (key in finalOutputs) {
+    for (let key in finalOutputs) {
         let element = document.getElementById(key);
         gates[key].output = getOutputFA(finalOutputs[key][0], finalOutputs[key][1]);
         if (gates[key].output == true) {

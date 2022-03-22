@@ -1,6 +1,5 @@
 import * as gatejs from "./gate.js";
-// import * as fajs from "./fa.js";
-import * as multiplexerjs from "./multiplexer.js";
+import * as fajs from "./fa.js";
 
 document.getScroll = function () {
     if (window.pageYOffset != undefined) {
@@ -15,7 +14,7 @@ document.getScroll = function () {
     }
 }
 const workingArea = document.getElementById("working-area");
-const jsPlumbInstance = jsPlumbBrowserUI.newInstance({
+export const jsPlumbInstance = jsPlumbBrowserUI.newInstance({
     container: workingArea,
     maxConnections: -1,
     endpoint: {
@@ -31,7 +30,7 @@ const jsPlumbInstance = jsPlumbBrowserUI.newInstance({
     connectionsDetachable: false,
 });
 
-const bindEvent1 = function () {
+export const bindEvent1 = function () {
     jsPlumbInstance.bind("beforeDrop", function (data) {
         let endpoint = data.connection.endpoints[0];
         let dropEndpoint = data.dropEndpoint;
@@ -39,7 +38,7 @@ const bindEvent1 = function () {
         const start_uuid = endpoint.uuid.split(":")[0];
         const end_uuid = dropEndpoint.uuid.split(":")[0];
         
-        if(endpoint.elementId == dropEndpoint.elementId) {
+        if (endpoint.elementId == dropEndpoint.elementId) {
             return false;
         }
 
@@ -65,13 +64,17 @@ const bindEvent1 = function () {
     });
 }
 
-const bindEvent2 = function () {
+export const bindEvent2 = function () {
     jsPlumbInstance.bind("beforeDrop", function (data) {
         let endpoint = data.connection.endpoints[0];
         let dropEndpoint = data.dropEndpoint;
 
         const start_uuid = endpoint.uuid.split(":")[0];
         const end_uuid = dropEndpoint.uuid.split(":")[0];
+        
+        if (endpoint.elementId == dropEndpoint.elementId) {
+            return false;
+        }
 
         if (start_uuid == "input" && end_uuid == "input") {
             return false;
@@ -81,31 +84,31 @@ const bindEvent2 = function () {
             jsPlumbInstance.connect({ uuids: [endpoint.uuid, dropEndpoint.uuid] });
             const start_type = endpoint.elementId.split("-")[0];
             const end_type = dropEndpoint.elementId.split("-")[0];
-            if (start_type == "Multiplexer" && end_type == "Multiplexer") {
+            if (start_type == "FullAdder" && end_type == "FullAdder") {
                 if (start_uuid == "output") {
                     
-                    let input = multiplexerjs.multiplexer[endpoint.elementId];
+                    let input = fajs.fullAdder[endpoint.elementId];
                     console.log(endpoint.overlays);
                     let pos = "";
-                    if (Object.keys(endpoint.overlays)[0].includes("out")) {
-                        pos = "out";
+                    if (Object.keys(endpoint.overlays)[0].includes("sum")) {
+                        pos = "Sum";
                     }
-                    // else if (Object.keys(endpoint.overlays)[0].includes("cout")) {
-                    //     pos = "Carry";
-                    // }
+                    else if (Object.keys(endpoint.overlays)[0].includes("cout")) {
+                        pos = "Carry";
+                    }
                     input.setConnected(true, pos);
                     console.log(input);
                     if (Object.keys(dropEndpoint.overlays)[0].includes("a")) {
-                        multiplexerjs.fullAdder[dropEndpoint.elementId].setA0([input, pos]);
+                        fajs.fullAdder[dropEndpoint.elementId].setA0([input, pos]);
                     }
                     else if (Object.keys(dropEndpoint.overlays)[0].includes("b")) {
-                        multiplexerjs.fullAdder[dropEndpoint.elementId].setB0([input, pos]);
+                        fajs.fullAdder[dropEndpoint.elementId].setB0([input, pos]);
                     }
                     else if (Object.keys(dropEndpoint.overlays)[0].includes("cin")) {
-                        multiplexerjs.fullAdder[dropEndpoint.elementId].setCin([input, pos]);
+                        fajs.fullAdder[dropEndpoint.elementId].setCin([input, pos]);
                     }
                 } else if (end_uuid == "output") {
-                    let input = multiplexerjs.fullAdder[dropEndpoint.elementId];
+                    let input = fajs.fullAdder[dropEndpoint.elementId];
                     let pos = "";
                     if (Object.keys(dropEndpoint.overlays)[0].includes("sum")) {
                         pos = "Sum";
@@ -115,13 +118,13 @@ const bindEvent2 = function () {
                     }
                     input.setConnected(true, pos);
                     if (Object.keys(endpoint.overlays)[0].includes("a")) {
-                        multiplexerjs.fullAdder[endpoint.elementId].setA0([input, pos]);
+                        fajs.fullAdder[endpoint.elementId].setA0([input, pos]);
                     }
                     else if (Object.keys(endpoint.overlays)[0].includes("b")) {
-                        multiplexerjs.fullAdder[endpoint.elementId].setB0([input, pos]);
+                        fajs.fullAdder[endpoint.elementId].setB0([input, pos]);
                     }
                     else if (Object.keys(endpoint.overlays)[0].includes("cin")) {
-                        multiplexerjs.fullAdder[endpoint.elementId].setCin([input, pos]);
+                        fajs.fullAdder[endpoint.elementId].setCin([input, pos]);
                     }
                 }
             }
@@ -131,13 +134,13 @@ const bindEvent2 = function () {
                     input.setConnected(true);
                     let pos = "";
                     if (Object.keys(endpoint.overlays)[0].includes("a")) {
-                        multiplexerjs.fullAdder[endpoint.elementId].setA0([input, pos]);
+                        fajs.fullAdder[endpoint.elementId].setA0([input, pos]);
                     }
                     else if (Object.keys(endpoint.overlays)[0].includes("b")) {
-                        multiplexerjs.fullAdder[endpoint.elementId].setB0([input, pos]);
+                        fajs.fullAdder[endpoint.elementId].setB0([input, pos]);
                     }
                     else if (Object.keys(endpoint.overlays)[0].includes("cin")) {
-                        multiplexerjs.fullAdder[endpoint.elementId].setCin([input, pos]);
+                        fajs.fullAdder[endpoint.elementId].setCin([input, pos]);
                     }
                 }
             }
@@ -147,19 +150,19 @@ const bindEvent2 = function () {
                     input.setConnected(true);
                     let pos = "";
                     if (Object.keys(dropEndpoint.overlays)[0].includes("a")) {
-                        multiplexerjs.fullAdder[dropEndpoint.elementId].setA0([input, pos]);
+                        fajs.fullAdder[dropEndpoint.elementId].setA0([input, pos]);
                     }
                     else if (Object.keys(dropEndpoint.overlays)[0].includes("b")) {
-                        multiplexerjs.fullAdder[dropEndpoint.elementId].setB0([input, pos]);
+                        fajs.fullAdder[dropEndpoint.elementId].setB0([input, pos]);
                     }
                     else if (Object.keys(dropEndpoint.overlays)[0].includes("cin")) {
-                        multiplexerjs.fullAdder[dropEndpoint.elementId].setCin([input, pos]);
+                        fajs.fullAdder[dropEndpoint.elementId].setCin([input, pos]);
                     }
                 }
             }
             else if (start_type == "FullAdder" && end_type == "Output") {
                 if (start_uuid == "output") {
-                    let input = multiplexerjs.fullAdder[endpoint.elementId];
+                    let input = fajs.fullAdder[endpoint.elementId];
                     let output = gatejs.gates[dropEndpoint.elementId];
                     if (Object.keys(endpoint.overlays)[0].includes("sum")) {
                         pos = "Sum";
@@ -169,12 +172,12 @@ const bindEvent2 = function () {
                     }
                     input.setConnected(true, pos);
                     output.addInput(input);
-                    multiplexerjs.finalOutputs[dropEndpoint.elementId] = [input, pos];
+                    fajs.finalOutputs[dropEndpoint.elementId] = [input, pos];
                 }
             }
             else if (start_type == "Output" && end_type == "FullAdder") {
                 if (start_uuid == "input") {
-                    let input = multiplexerjs.fullAdder[dropEndpoint.elementId];
+                    let input = fajs.fullAdder[dropEndpoint.elementId];
                     let output = gatejs.gates[endpoint.elementId];
                     if (Object.keys(dropEndpoint.overlays)[0].includes("sum")) {
                         pos = "Sum";
@@ -184,7 +187,7 @@ const bindEvent2 = function () {
                     }
                     input.setConnected(true, pos);
                     output.addInput(input);
-                    multiplexerjs.finalOutputs[endpoint.elementId] = [input, pos];
+                    fajs.finalOutputs[endpoint.elementId] = [input, pos];
                 }
             }
             else if (start_type == "Input" && end_type == "Output") {
@@ -193,7 +196,7 @@ const bindEvent2 = function () {
                     let output = gatejs.gates[dropEndpoint.elementId];
                     input.setConnected(true);
                     output.addInput(input);
-                    multiplexerjs.finalOutputs[dropEndpoint.elementId] = [input, ""];
+                    fajs.finalOutputs[dropEndpoint.elementId] = [input, ""];
                 }
             }
             else if (start_type == "Output" && end_type == "Input") {
@@ -202,7 +205,7 @@ const bindEvent2 = function () {
                     let output = gatejs.gates[endpoint.elementId];
                     input.setConnected(true);
                     output.addInput(input);
-                    multiplexerjs.finalOutputs[endpoint.elementId] = [input, ""];
+                    fajs.finalOutputs[endpoint.elementId] = [input, ""];
                 }
             }
             // return true;
@@ -210,12 +213,12 @@ const bindEvent2 = function () {
     });
 }
 
-const unbindEvent = () => {
+export const unbindEvent = () => {
     jsPlumbInstance.unbind("beforeDrop");
 }
 
 
-function registerGate(id, gate) {
+export function registerGate(id, gate) {
     const element = document.getElementById(id);
     const gateType = id.split("-")[0];
 
@@ -362,15 +365,14 @@ function registerGate(id, gate) {
         );
     }
 }
-
-function initTwoBitMultiplexer() {
-    let ids = ["Input-0", "Input-1", "Input-2", "Output-3"]; // [A B Sum Carry Out]
-    let types = ["Input", "Input", "Input", "Output"];
-    let names = ["A", "B", "Select", "Output"];
+export function initHalfAdder() {
+    let ids = ["Input-0", "Input-1", "Output-2", "Output-3"]; // [A B Sum Carry Out]
+    let types = ["Input", "Input", "Output", "Output"];
+    let names = ["A", "B", "Sum", "Carry"];
     let positions = [
-        { x: 40, y: 100 },
-        { x: 40, y: 450 },
-        { x: 40, y: 700 },
+        { x: 40, y: 200 },
+        { x: 40, y: 550 },
+        { x: 820, y: 200 },
         { x: 820, y: 550 },
     ];
     for (let i = 0; i < ids.length; i++) {
@@ -384,51 +386,16 @@ function initTwoBitMultiplexer() {
     }
 }
 
-// function initRippleAdder() {
-//     let ids = ["Input-0", "Input-1", "Output-2", "Input-3", "Input-4", "Output-5", "Input-6", "Input-7", "Output-8", "Input-9", "Input-10", "Output-11", "Output-12", "Input-13"] // [A0,B0,Sum0,A1,B1,Sum1,A2,B2,Sum2,A3,B3,Sum3,CarryOut, CarryIn]
-//     let types = ["Input", "Input", "Output", "Input", "Input", "Output", "Input", "Input", "Output", "Input", "Input", "Output", "Output", "Input"]
-//     let names = ["A0", "B0", "Sum0", "A1", "B1", "Sum1", "A2", "B2", "Sum2", "A3", "B3", "Sum3", "CarryOut", "CarryIn"]
-//     let positions = [
-//         { x: 640, y: 50 },
-//         { x: 740, y: 50 },
-//         { x: 800, y: 625 },
-//         { x: 440, y: 50 },
-//         { x: 540, y: 50 },
-//         { x: 600, y: 625 },
-//         { x: 240, y: 50 },
-//         { x: 340, y: 50 },
-//         { x: 400, y: 625 },
-//         { x: 40, y: 50 },
-//         { x: 140, y: 50 },
-//         { x: 200, y: 625 },
-//         { x: 40, y: 500 },
-//         { x: 820, y: 150 },
-//     ];
-//     for (let i = 0; i < ids.length; i++) {
-//         let gate = new gatejs.Gate(types[i]);
-//         gate.setId(ids[i]);
-//         gate.setName(names[i]);
-//         const component = gate.generateComponent();
-//         const parent = document.getElementById("working-area");
-//         parent.insertAdjacentHTML('beforeend', component);
-//         gate.registerComponent("working-area",positions[i].x, positions[i].y);
-//     }
-// }
-
-function initFourBitMultiplexer() {
-    let ids = ["Input-0", "Input-1", "Input-2", "Input-3", "Input-4", "Input-5", "Output-6", "Output-7", "Output-8"] // [A0,B0,A1,B1,S0,S1,Output0,Output1,FinalOutput]
-    let types = ["Input", "Input", "Input", "Input", "Input", "Input", "Output", "Output", "Output"]
-    let names = ["A0", "B0","A1", "B1", "S0","S1","Output0","Output1","FinalOutput"]
+export function initFullAdder() {
+    let ids = ["Input-0", "Input-1", "Input-2", "Output-3", "Output-4"]; // [A,B,carry -input,Sum,carry-output]
+    let types = ["Input", "Input", "Input", "Output", "Output"];
+    let names = ["A", "B", "CarryIn", "Sum", "CarryOut"];
     let positions = [
-        { x: 640, y: 50 },
-        { x: 740, y: 50 },
-        { x: 800, y: 625 },
-        { x: 440, y: 50 },
-        { x: 540, y: 50 },
-        { x: 600, y: 625 },
-        { x: 240, y: 50 },
-        { x: 340, y: 50 },
-        { x: 400, y: 625 }
+        { x: 40, y: 150 },
+        { x: 40, y: 375 },
+        { x: 40, y: 600 },
+        { x: 820, y: 262.5 },
+        { x: 820, y: 487.5 },
     ];
     for (let i = 0; i < ids.length; i++) {
         let gate = new gatejs.Gate(types[i]);
@@ -441,13 +408,43 @@ function initFourBitMultiplexer() {
     }
 }
 
+export function initRippleAdder() {
+    let ids = ["Input-0", "Input-1", "Output-2", "Input-3", "Input-4", "Output-5", "Input-6", "Input-7", "Output-8", "Input-9", "Input-10", "Output-11", "Output-12", "Input-13"] // [A0,B0,Sum0,A1,B1,Sum1,A2,B2,Sum2,A3,B3,Sum3,CarryOut, CarryIn]
+    let types = ["Input", "Input", "Output", "Input", "Input", "Output", "Input", "Input", "Output", "Input", "Input", "Output", "Output", "Input"]
+    let names = ["A0", "B0", "Sum0", "A1", "B1", "Sum1", "A2", "B2", "Sum2", "A3", "B3", "Sum3", "CarryOut", "CarryIn"]
+    let positions = [
+        { x: 640, y: 50 },
+        { x: 740, y: 50 },
+        { x: 800, y: 625 },
+        { x: 440, y: 50 },
+        { x: 540, y: 50 },
+        { x: 600, y: 625 },
+        { x: 240, y: 50 },
+        { x: 340, y: 50 },
+        { x: 400, y: 625 },
+        { x: 40, y: 50 },
+        { x: 140, y: 50 },
+        { x: 200, y: 625 },
+        { x: 40, y: 500 },
+        { x: 820, y: 150 },
+    ];
+    for (let i = 0; i < ids.length; i++) {
+        let gate = new gatejs.Gate(types[i]);
+        gate.setId(ids[i]);
+        gate.setName(names[i]);
+        const component = gate.generateComponent();
+        const parent = document.getElementById("working-area");
+        parent.insertAdjacentHTML('beforeend', component);
+        gate.registerComponent("working-area",positions[i].x, positions[i].y);
+    }
+}
 
-function refreshWorkingArea() {
+export function refreshWorkingArea() {
     jsPlumbInstance.reset();
     window.numComponents = 0;
 
     gatejs.clearGates();
-    multiplexerjs.clearMux();
+    fajs.clearFAs();
 }
 
 
@@ -455,7 +452,4 @@ function refreshWorkingArea() {
 window.currentTab = "Task1";
 bindEvent1();
 refreshWorkingArea();
-initTwoBitMultiplexer();
-
-
-export {initFourBitMultiplexer,initTwoBitMultiplexer,refreshWorkingArea, registerGate, unbindEvent, bindEvent1, bindEvent2, jsPlumbInstance}
+initHalfAdder();
