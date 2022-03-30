@@ -1,51 +1,39 @@
-**Half Adder**
+ An electronic multiplexer can be considered as a multiple-input, single-output switch, and a demultiplexer as a single-input, multiple-output switch.
 
-<img src="images/Half_Adder.svg.png">
-A half adder adds two 1-bit binary numbers A and B to generate a 1-bit SUM (S) and a 1-bit CARRY (C) as output. The carry is theoretically carried on to the next bit position. The final sum numerically equals 2C + S. The simplest half-adder design, shown in the picture, incorporates an XOR gate for S and an AND gate for C. Half adders cannot be composed to produce larger bit adders as they lack a carry-in input. The outputs S and C can be expressed as logical functions of input variables A,B as follows:
+2 X 1 Multiplexer
+In digital circuit design, the selector wires are of digital value. In the case of a 2-to-1 multiplexer, a logic value of 0 would connect I0 to the output while a logic value of 1 would connect I1 to the output. In larger multiplexers, the number of selector pins is equal to log2(n) where n is the number of inputs.
 
-**S** = **1** either if (**A = 0** and **B = 1**) or if (**A = 1** and **B = 0**) = **A XOR B**
-**C= 1** only if (**A = 1** and **B = 1**) = **A AND B**
+<img src="images/2X1mux.jpg">
 
-**Truth Table**
+A 2-to-1 multiplexer has a boolean equation where A and B are the two inputs, S is the selector input, and Z is the output: Z = ( A . S') + (B . S)
 
-|A|B|CARRY|SUM|
-|-|-|-----|---|
-|0|0|0    |0  |
-|0|1|0    |1  |	
-|1|0|0    |1  |
-|1|1|1    |0  |
+**Truth Table** 
 
+|S|A|B|Z|
+|-|-|-|-|
+|0|1|1|1|
+|0|1|0|1|
+|0|0|1|0|
+|0|0|0|0|
+|1|1|1|1|
+|1|1|0|0|
+|1|0|1|1|
+|1|0|0|0|
 
-Full Adder
+4 X 1 Multiplexer
+Larger multiplexers are also common and requires ceil(log2(n)) selector pins for n inputs. Other common sizes are 4-to-1, 8-to-1, and 16-to-1. Since digital logic uses binary values, powers of 2 are used (4, 8, 16) to maximally control a number of inputs for the given number of selector inputs. 
 
-<img src="images/Full_Adder.svg.png">
+<img src="images/multiplexer.gif">
 
-A full adder adds two 1-bit binary numbers along with a carry brought in and produces a sum and carry out as ouputs.1-bit full adder adds three 1-bit numbers, often written as A, B, and Cin, where A and B are the operands, and Cin is a bit carried in from a “past” addition.Circuit produces a 2-bit output sum typically represented by the signals Cout and S, where the sum numerically equals 2Cout + S . A full adder can be implemented in many different ways using custom transistor-level circuits or using other gates.
+**Truth Table** 
 
-**S = A XOR B XOR Cin
-Cout = (A
-AND B) OR (Cin AND (A XOR B))**
-
-
-**Truth Table**
-
-|A|B|Cin|Cout|S|
-|-|-|---|----|-|
-|0|0|0  |0   |0|
-|1|0|0  |0   |1|
-|0|1|0  |0   |1|
-|1|1|0  |1   |0|
-|0|0|1  |0   |1|
-|1|0|1  |1   |0|
-|0|1|1  |1   |0|
-|1|1|1  |1   |1|
-
-
-**Ripple Carry Adder**
-
-<img src="images/ripple_carry_adder.svg.png">
-
-Multiple full adders can be used to create adders of greater bit lengths. Each full adder uses the Cout of the previous adder as its Cin. This kind of adder is a ripple carry adder, since the carry bits "ripple" through the full adder stages. Note that the first (and only the first) full adder may be replaced by a half adder.
-
-
-
+|S<sub>1</sub>  S<sub>0</sub> | x<sub>3</sub> x<sub>2</sub> x<sub>1</sub> x<sub>0</sub> | y |
+|-----------------------------|---------------------------------------------------------|---|
+|      0           0          |       x             x             x             0       | 0 |
+|      0           0          |       x             x             x             1       | 1 |
+|      0           1          |       x             x             0             x       | 0 |
+|      0           1          |       x             x             1             x       | 1 |
+|      1           0          |       x             0             x             x       | 0 |
+|      1           0          |       x             1             x             x       | 1 |
+|      1           1          |       0             x             x             x       | 0 |
+|      1           1          |       1             x             x             x       | 1 |         

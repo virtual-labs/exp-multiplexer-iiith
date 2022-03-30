@@ -1,5 +1,9 @@
 import * as gatejs from "./gate.js";
-import * as fajs from "./fa.js";
+// import * as fajs from "./fa.js";
+import * as multiplexerjs from "./multiplexer.js";
+import {wireColours} from "./layout.js"
+
+let num_wires = 0;
 
 document.getScroll = function () {
     if (window.pageYOffset != undefined) {
@@ -14,7 +18,7 @@ document.getScroll = function () {
     }
 }
 const workingArea = document.getElementById("working-area");
-export const jsPlumbInstance = jsPlumbBrowserUI.newInstance({
+const jsPlumbInstance = jsPlumbBrowserUI.newInstance({
     container: workingArea,
     maxConnections: -1,
     endpoint: {
@@ -26,11 +30,11 @@ export const jsPlumbInstance = jsPlumbBrowserUI.newInstance({
         containmentPadding: 5,
     },
     connector: "Flowchart",
-    paintStyle: { strokeWidth: 3, stroke: "#456" },
+    paintStyle: { strokeWidth: 4, stroke: "#888888" },
     connectionsDetachable: false,
 });
 
-export const bindEvent1 = function () {
+const bindEvent1 = function () {
     jsPlumbInstance.bind("beforeDrop", function (data) {
         let endpoint = data.connection.endpoints[0];
         let dropEndpoint = data.dropEndpoint;
@@ -38,7 +42,7 @@ export const bindEvent1 = function () {
         const start_uuid = endpoint.uuid.split(":")[0];
         const end_uuid = dropEndpoint.uuid.split(":")[0];
         
-        if (endpoint.elementId == dropEndpoint.elementId) {
+        if(endpoint.elementId == dropEndpoint.elementId) {
             return false;
         }
 
@@ -47,8 +51,9 @@ export const bindEvent1 = function () {
         } else if (start_uuid == "output" && end_uuid == "output") {
             return false;
         } else {
-            jsPlumbInstance.connect({ uuids: [endpoint.uuid, dropEndpoint.uuid] });
-
+            jsPlumbInstance.connect({ uuids: [endpoint.uuid, dropEndpoint.uuid], paintStyle:{ stroke: wireColours[num_wires], strokeWidth:4 }});
+            num_wires++;
+            num_wires = num_wires % wireColours.length;
             if (start_uuid == "output") {
                 let input = gatejs.gates[endpoint.elementId];
                 input.isConnected = true;
@@ -64,130 +69,133 @@ export const bindEvent1 = function () {
     });
 }
 
-export const bindEvent2 = function () {
+const bindEvent2 = function () {
     jsPlumbInstance.bind("beforeDrop", function (data) {
         let endpoint = data.connection.endpoints[0];
         let dropEndpoint = data.dropEndpoint;
 
         const start_uuid = endpoint.uuid.split(":")[0];
         const end_uuid = dropEndpoint.uuid.split(":")[0];
-        
-        if (endpoint.elementId == dropEndpoint.elementId) {
-            return false;
-        }
 
         if (start_uuid == "input" && end_uuid == "input") {
             return false;
         } else if (start_uuid == "output" && end_uuid == "output") {
             return false;
         } else {
-            jsPlumbInstance.connect({ uuids: [endpoint.uuid, dropEndpoint.uuid] });
+            jsPlumbInstance.connect({ uuids: [endpoint.uuid, dropEndpoint.uuid], paintStyle:{ stroke: wireColours[num_wires], strokeWidth:4 }});
+            num_wires++;
+            num_wires = num_wires % wireColours.length;
             const start_type = endpoint.elementId.split("-")[0];
             const end_type = dropEndpoint.elementId.split("-")[0];
-            if (start_type == "FullAdder" && end_type == "FullAdder") {
+            if (start_type == "Multiplexer" && end_type == "Multiplexer") {
                 if (start_uuid == "output") {
-                    
-                    let input = fajs.fullAdder[endpoint.elementId];
+                    let input = multiplexerjs.multiplexer[endpoint.elementId];
                     console.log(endpoint.overlays);
                     let pos = "";
-                    if (Object.keys(endpoint.overlays)[0].includes("sum")) {
-                        pos = "Sum";
+                    if (Object.keys(endpoint.overlays)[0].includes("finalOutput")) {
+                        pos = "Out";
                     }
-                    else if (Object.keys(endpoint.overlays)[0].includes("cout")) {
-                        pos = "Carry";
-                    }
-                    input.setConnected(true, pos);
+                    // else if (Object.keys(endpoint.overlays)[0].includes("cout")) {
+                    //     pos = "Carry";
+                    // }
+                    input.setConnected(true);
                     console.log(input);
                     if (Object.keys(dropEndpoint.overlays)[0].includes("a")) {
-                        fajs.fullAdder[dropEndpoint.elementId].setA0([input, pos]);
+                        multiplexerjs.multiplexer[dropEndpoint.elementId].setA0([input, pos]);
                     }
                     else if (Object.keys(dropEndpoint.overlays)[0].includes("b")) {
-                        fajs.fullAdder[dropEndpoint.elementId].setB0([input, pos]);
+                        multiplexerjs.multiplexer[dropEndpoint.elementId].setB0([input, pos]);
                     }
-                    else if (Object.keys(dropEndpoint.overlays)[0].includes("cin")) {
-                        fajs.fullAdder[dropEndpoint.elementId].setCin([input, pos]);
+                    else if (Object.keys(dropEndpoint.overlays)[0].includes("s0")) {
+                        multiplexerjs.multiplexer[dropEndpoint.elementId].setSelectLine([input, pos]);
                     }
+                    // else if (Object.keys(dropEndpoint.overlays)[0].includes("cin")) {
+                    //     multiplexerjs.fullAdder[dropEndpoint.elementId].setCin([input, pos]);
+                    // }
                 } else if (end_uuid == "output") {
-                    let input = fajs.fullAdder[dropEndpoint.elementId];
+                    let input = multiplexerjs.multiplexer[dropEndpoint.elementId];
                     let pos = "";
-                    if (Object.keys(dropEndpoint.overlays)[0].includes("sum")) {
-                        pos = "Sum";
+                    if (Object.keys(dropEndpoint.overlays)[0].includes("finalOutput")) {
+                        pos = "Out";
                     }
-                    else if (Object.keys(dropEndpoint.overlays)[0].includes("cout")) {
-                        pos = "Carry";
-                    }
-                    input.setConnected(true, pos);
+                    input.setConnected(true);
                     if (Object.keys(endpoint.overlays)[0].includes("a")) {
-                        fajs.fullAdder[endpoint.elementId].setA0([input, pos]);
+                        multiplexerjs.multiplexer[endpoint.elementId].setA0([input, pos]);
                     }
                     else if (Object.keys(endpoint.overlays)[0].includes("b")) {
-                        fajs.fullAdder[endpoint.elementId].setB0([input, pos]);
+                        multiplexerjs.multiplexer[endpoint.elementId].setB0([input, pos]);
                     }
-                    else if (Object.keys(endpoint.overlays)[0].includes("cin")) {
-                        fajs.fullAdder[endpoint.elementId].setCin([input, pos]);
+                    else if (Object.keys(endpoint.overlays)[0].includes("s0")) {
+                        multiplexerjs.multiplexer[endpoint.elementId].setSelectLine([input, pos]);
                     }
                 }
             }
-            else if (start_type == "FullAdder" && end_type == "Input") {
+            else if (start_type == "Multiplexer" && end_type == "Input") {
                 if (end_uuid == "output") {
                     let input = gatejs.gates[dropEndpoint.elementId];
                     input.setConnected(true);
                     let pos = "";
                     if (Object.keys(endpoint.overlays)[0].includes("a")) {
-                        fajs.fullAdder[endpoint.elementId].setA0([input, pos]);
+                        multiplexerjs.multiplexer[endpoint.elementId].setA0([input, pos]);
                     }
                     else if (Object.keys(endpoint.overlays)[0].includes("b")) {
-                        fajs.fullAdder[endpoint.elementId].setB0([input, pos]);
+                        multiplexerjs.multiplexer[endpoint.elementId].setB0([input, pos]);
                     }
-                    else if (Object.keys(endpoint.overlays)[0].includes("cin")) {
-                        fajs.fullAdder[endpoint.elementId].setCin([input, pos]);
+                    else if (Object.keys(endpoint.overlays)[0].includes("s0")) {
+                        multiplexerjs.multiplexer[endpoint.elementId].setSelectLine([input, pos]);
                     }
+                    // else if (Object.keys(endpoint.overlays)[0].includes("cin")) {
+                    //     multiplexerjs.multiplexer[endpoint.elementId].setCin([input, pos]);
+                    // }
                 }
             }
-            else if (start_type == "Input" && end_type == "FullAdder") {
+            else if (start_type == "Input" && end_type == "Multiplexer") {
                 if (start_uuid == "output") {
                     let input = gatejs.gates[endpoint.elementId];
                     input.setConnected(true);
                     let pos = "";
                     if (Object.keys(dropEndpoint.overlays)[0].includes("a")) {
-                        fajs.fullAdder[dropEndpoint.elementId].setA0([input, pos]);
+                        multiplexerjs.multiplexer[dropEndpoint.elementId].setA0([input, pos]);
                     }
                     else if (Object.keys(dropEndpoint.overlays)[0].includes("b")) {
-                        fajs.fullAdder[dropEndpoint.elementId].setB0([input, pos]);
+                        multiplexerjs.multiplexer[dropEndpoint.elementId].setB0([input, pos]);
                     }
-                    else if (Object.keys(dropEndpoint.overlays)[0].includes("cin")) {
-                        fajs.fullAdder[dropEndpoint.elementId].setCin([input, pos]);
+                    else if (Object.keys(dropEndpoint.overlays)[0].includes("s0")) {
+                        multiplexerjs.multiplexer[dropEndpoint.elementId].setSelectLine([input, pos]);
                     }
+                    // else if (Object.keys(dropEndpoint.overlays)[0].includes("cin")) {
+                    //     multiplexerjs.multiplexer[dropEndpoint.elementId].setCin([input, pos]);
+                    // }
                 }
             }
-            else if (start_type == "FullAdder" && end_type == "Output") {
+            else if (start_type == "Multiplexer" && end_type == "Output") {
                 if (start_uuid == "output") {
-                    let input = fajs.fullAdder[endpoint.elementId];
+                    let input = multiplexerjs.multiplexer[endpoint.elementId];
                     let output = gatejs.gates[dropEndpoint.elementId];
-                    if (Object.keys(endpoint.overlays)[0].includes("sum")) {
-                        pos = "Sum";
+                    // console.log(endpoint.overlays);
+                    let pos=""
+                    if (Object.keys(endpoint.overlays)[0].includes("finalOutput")) {
+                        pos = "Out";
                     }
-                    else if (Object.keys(endpoint.overlays)[0].includes("cout")) {
-                        pos = "Carry";
-                    }
-                    input.setConnected(true, pos);
+                    input.setConnected(true);
                     output.addInput(input);
-                    fajs.finalOutputs[dropEndpoint.elementId] = [input, pos];
+                    multiplexerjs.finalOutputs[dropEndpoint.elementId] = [input, pos];
+                    console.log(multiplexerjs.finalOutputs);
                 }
             }
-            else if (start_type == "Output" && end_type == "FullAdder") {
+            else if (start_type == "Output" && end_type == "Multiplexer") {
                 if (start_uuid == "input") {
-                    let input = fajs.fullAdder[dropEndpoint.elementId];
+                    let input = multiplexerjs.multiplexer[dropEndpoint.elementId];
                     let output = gatejs.gates[endpoint.elementId];
-                    if (Object.keys(dropEndpoint.overlays)[0].includes("sum")) {
-                        pos = "Sum";
+                    console.log(endpoint.overlays);
+                    let pos=""
+                    if (Object.keys(endpoint.overlays)[0].includes("finalOutput")) {
+                        pos = "Out";
                     }
-                    else if (Object.keys(dropEndpoint.overlays)[0].includes("carry")) {
-                        pos = "Carry";
-                    }
-                    input.setConnected(true, pos);
+                    input.setConnected(true);
                     output.addInput(input);
-                    fajs.finalOutputs[endpoint.elementId] = [input, pos];
+                    multiplexerjs.finalOutputs[endpoint.elementId] = [input, pos];
+                    console.log(multiplexerjs.finalOutputs);
                 }
             }
             else if (start_type == "Input" && end_type == "Output") {
@@ -196,7 +204,7 @@ export const bindEvent2 = function () {
                     let output = gatejs.gates[dropEndpoint.elementId];
                     input.setConnected(true);
                     output.addInput(input);
-                    fajs.finalOutputs[dropEndpoint.elementId] = [input, ""];
+                    // multiplexerjs.finalOutputs[dropEndpoint.elementId] = [input, ""];
                 }
             }
             else if (start_type == "Output" && end_type == "Input") {
@@ -205,7 +213,7 @@ export const bindEvent2 = function () {
                     let output = gatejs.gates[endpoint.elementId];
                     input.setConnected(true);
                     output.addInput(input);
-                    fajs.finalOutputs[endpoint.elementId] = [input, ""];
+                    // multiplexerjs.finalOutputs[endpoint.elementId] = [input, ""];
                 }
             }
             // return true;
@@ -213,12 +221,12 @@ export const bindEvent2 = function () {
     });
 }
 
-export const unbindEvent = () => {
+const unbindEvent = () => {
     jsPlumbInstance.unbind("beforeDrop");
 }
 
 
-export function registerGate(id, gate) {
+function registerGate(id, gate) {
     const element = document.getElementById(id);
     const gateType = id.split("-")[0];
 
@@ -364,15 +372,71 @@ export function registerGate(id, gate) {
             })
         );
     }
+    else if (gateType == "Multiplexer") {
+        // Select line
+        gate.addInputPoints(
+            jsPlumbInstance.addEndpoint(element, {
+                anchor: [0, 0.5, -1, 0, -7, 0],
+                source: true,
+                target: true,
+                connectionsDetachable: false,
+                uuid: "input:0:" + id,
+                overlays: [
+                    { type: "Label", options: { label: "SelectLine", id: "s0", location: [4, 0.2] } }
+                ],
+            })
+        );
+        // output of 2x1 MUX
+        gate.addOutputPoints(
+            jsPlumbInstance.addEndpoint(element, {
+                anchor: [0.5, 1, 0, 1, 0, 7],
+                source: true,
+                target: true,
+                connectionsDetachable: false,
+                uuid: "output:1:" + id,
+                overlays: [
+                    { type: "Label", options: { label: "Output", id: "finalOutput", location: [0.3, -1.7] } }
+                ],
+            })
+        );
+        // input A0
+        gate.addInputPoints(
+            jsPlumbInstance.addEndpoint(element, {
+                anchor: [0.5, 0, 0, -1, -25, -7],
+                source: true,
+                target: true,
+                connectionsDetachable: false,
+                uuid: "input:2:" + id,
+                overlays: [
+                    { type: "Label", options: { label: "I0", id: "a0", location: [0.3, 1.7] } }
+                ],
+            })
+        );
+        // input B0
+        gate.addInputPoints(
+            jsPlumbInstance.addEndpoint(element, {
+                anchor: [0.5, 0, 0, -1, 25, -7],
+                source: true,
+                target: true,
+                connectionsDetachable: false,
+                uuid: "input:3:" + id,
+                overlays: [
+                    { type: "Label", options: { label: "I1", id: "b0", location: [0.3, 1.7] } }
+                ],
+            })
+        );
+        
+    }
 }
-export function initHalfAdder() {
-    let ids = ["Input-0", "Input-1", "Output-2", "Output-3"]; // [A B Sum Carry Out]
-    let types = ["Input", "Input", "Output", "Output"];
-    let names = ["A", "B", "Sum", "Carry"];
+
+function initTwoBitMultiplexer() {
+    let ids = ["Input-0", "Input-1", "Input-2", "Output-3"]; // [A B Select Out]
+    let types = ["Input", "Input", "Input", "Output"];
+    let names = ["A", "B", "Select", "Output"];
     let positions = [
-        { x: 40, y: 200 },
-        { x: 40, y: 550 },
-        { x: 820, y: 200 },
+        { x: 40, y: 100 },
+        { x: 40, y: 450 },
+        { x: 40, y: 700 },
         { x: 820, y: 550 },
     ];
     for (let i = 0; i < ids.length; i++) {
@@ -386,16 +450,20 @@ export function initHalfAdder() {
     }
 }
 
-export function initFullAdder() {
-    let ids = ["Input-0", "Input-1", "Input-2", "Output-3", "Output-4"]; // [A,B,carry -input,Sum,carry-output]
-    let types = ["Input", "Input", "Input", "Output", "Output"];
-    let names = ["A", "B", "CarryIn", "Sum", "CarryOut"];
+
+
+function initFourBitMultiplexer() {
+    let ids = ["Input-0", "Input-1", "Input-2", "Input-3", "Input-4", "Input-5","Output-8"] // [A0,B0,A1,B1,S0,S1,Output0,Output1,FinalOutput]
+    let types = ["Input", "Input", "Input", "Input", "Input", "Input", "Output"]
+    let names = ["I0", "I1","I2", "I3", "S1","S0","FinalOutput"]
     let positions = [
-        { x: 40, y: 150 },
-        { x: 40, y: 375 },
-        { x: 40, y: 600 },
-        { x: 820, y: 262.5 },
-        { x: 820, y: 487.5 },
+        { x: 300, y: 50 }, 
+        { x: 400, y: 50 }, 
+        { x: 640, y: 50 }, 
+        { x: 740, y: 50 }, 
+        { x: 100, y: 400 },
+        { x: 100, y: 200 },
+        { x: 500, y: 700 }
     ];
     for (let i = 0; i < ids.length; i++) {
         let gate = new gatejs.Gate(types[i]);
@@ -408,48 +476,28 @@ export function initFullAdder() {
     }
 }
 
-export function initRippleAdder() {
-    let ids = ["Input-0", "Input-1", "Output-2", "Input-3", "Input-4", "Output-5", "Input-6", "Input-7", "Output-8", "Input-9", "Input-10", "Output-11", "Output-12", "Input-13"] // [A0,B0,Sum0,A1,B1,Sum1,A2,B2,Sum2,A3,B3,Sum3,CarryOut, CarryIn]
-    let types = ["Input", "Input", "Output", "Input", "Input", "Output", "Input", "Input", "Output", "Input", "Input", "Output", "Output", "Input"]
-    let names = ["A0", "B0", "Sum0", "A1", "B1", "Sum1", "A2", "B2", "Sum2", "A3", "B3", "Sum3", "CarryOut", "CarryIn"]
-    let positions = [
-        { x: 640, y: 50 },
-        { x: 740, y: 50 },
-        { x: 800, y: 625 },
-        { x: 440, y: 50 },
-        { x: 540, y: 50 },
-        { x: 600, y: 625 },
-        { x: 240, y: 50 },
-        { x: 340, y: 50 },
-        { x: 400, y: 625 },
-        { x: 40, y: 50 },
-        { x: 140, y: 50 },
-        { x: 200, y: 625 },
-        { x: 40, y: 500 },
-        { x: 820, y: 150 },
-    ];
-    for (let i = 0; i < ids.length; i++) {
-        let gate = new gatejs.Gate(types[i]);
-        gate.setId(ids[i]);
-        gate.setName(names[i]);
-        const component = gate.generateComponent();
-        const parent = document.getElementById("working-area");
-        parent.insertAdjacentHTML('beforeend', component);
-        gate.registerComponent("working-area",positions[i].x, positions[i].y);
-    }
-}
 
-export function refreshWorkingArea() {
+function refreshWorkingArea() {
     jsPlumbInstance.reset();
     window.numComponents = 0;
 
     gatejs.clearGates();
-    fajs.clearFAs();
+    multiplexerjs.clearMux();
 }
+
+
+const getInfo = function () {
+    console.log(gatejs.gates, multiplexerjs.multiplexer,multiplexerjs.finalOutputs)
+}
+
+window.getInfo = getInfo
 
 
 
 window.currentTab = "Task1";
 bindEvent1();
 refreshWorkingArea();
-initHalfAdder();
+initTwoBitMultiplexer();
+
+
+export {initFourBitMultiplexer,initTwoBitMultiplexer,refreshWorkingArea, registerGate, unbindEvent, bindEvent1, bindEvent2, jsPlumbInstance}

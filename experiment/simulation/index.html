@@ -31,11 +31,6 @@
 								Task 2
 							</a>
 						</li>
-						<li id="Task3" onclick="changeTabs(event)">
-							<a>
-								Task 3
-							</a>
-						</li>
 					</ul>
 				</div>
 			</div>
@@ -44,9 +39,9 @@
 		<div class="columns is-centered">
 			<div class="column">
 				<div class="v-instruction-container">
-					<div class="v-instruction-title" id="TaskTitle">Half Adder</div>
+					<div class="v-instruction-title" id="TaskTitle">Two bit Multiplexer</div>
 					<div class="v-instruction-text" id="TaskDescription">
-						Implement a 1-bit half adder
+						Implement a 2-bit Multiplexer
 					</div>
 				</div>
 			</div>
@@ -68,15 +63,15 @@
 				<div class="v-datalist-row">
 					<div class="columns is-centered" id="toolbar">
 						<div class="column is-one-half">
-							<div class="component-button AND" onclick="Add(event)">AND</div>
-							<div class="component-button OR" onclick="Add(event)">OR</div>
-							<div class="component-button NOT" onclick="Add(event)">NOT</div>
-							<div class="component-button NAND" onclick="Add(event)">NAND</div>
+							<div class="component-button AND" onclick="addGate(event)">AND</div>
+							<div class="component-button OR" onclick="addGate(event)">OR</div>
+							<div class="component-button NOT" onclick="addGate(event)">NOT</div>
+							<div class="component-button NAND" onclick="addGate(event)">NAND</div>
 						</div>
 						<div class="column is-one-half">
-							<div class="component-button NOR" onclick="Add(event)">NOR</div>
-							<div class="component-button XOR" onclick="Add(event)">XOR</div>
-							<div class="component-button XNOR" onclick="Add(event)">XNOR</div>
+							<div class="component-button NOR" onclick="addGate(event)">NOR</div>
+							<div class="component-button XOR" onclick="addGate(event)">XOR</div>
+							<div class="component-button XNOR" onclick="addGate(event)">XNOR</div>
 						</div>
 					</div>
 				</div>
@@ -97,17 +92,16 @@
 						<table class="table is-bordered is-fullwidth">
 							<thead id="table-head">
 								<tr>
-									<th colspan="2">Inputs</th>
-									<th colspan="2">Expected Values</th>
-									<th colspan="2">Observed Values</th>
+									<th colspan="3">Inputs</th>
+									<th colspan="1">Expected Values</th>
+									<th colspan="1">Observed Values</th>
 								</tr>
 								<tr>
 									<th>A</th>
 									<th>B</th>
-									<th>Sum</th>
-									<th>Carry</th>
-									<th>Sum</th>
-									<th>Carry</th>
+									<th>SelectLine</th>
+									<th>Output</th>
+									<th>Output</th>
 								</tr>
 							</thead>
 							<tbody id="table-body">

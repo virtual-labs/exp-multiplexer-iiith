@@ -83,6 +83,24 @@
   text-align: center;
 }
 
+.Multiplexer {
+  background-color: #29e;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.Multiplexer:after {
+  content: "2:1 MUX";
+  margin: auto;
+  padding: 1.2rem 0rem;
+  font-weight: bold;
+  font-size: 1rem;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  text-align: center;
+}
+
 .HIGH {
   text-align: center;
   display: inline-block;
