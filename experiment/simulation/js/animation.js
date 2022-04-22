@@ -18,7 +18,7 @@ const instructionBox = document.getElementsByClassName("instructions-box")[0];
 instructionBox.addEventListener("click", (e) => {
   instructionBox.classList.toggle("expand");
 });
-
+"use strict";
 
 
 const svg = document.querySelector(".svg");
@@ -474,7 +474,7 @@ function RestartCircuit() {
 
 
 
-    OBSERV.innerHTML = "Successfully restored";
+    OBSERV.innerHTML = "Successfully Restored";
     SPEED.selectedIndex=0;
 
 }
