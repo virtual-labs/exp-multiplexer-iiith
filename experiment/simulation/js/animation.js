@@ -13,11 +13,6 @@ if (width < 1024) {
 }
 sidePanels[0].style.height = circuitBoard.style.height;
 
-// Instruction box
-const instructionBox = document.getElementsByClassName("instructions-box")[0];
-instructionBox.addEventListener("click", (e) => {
-  instructionBox.classList.toggle("expand");
-});
 "use strict";
 
 
@@ -394,7 +389,7 @@ function fourXspeed() {
 
 
 }
-function SetSpeed(speed) {
+function setSpeed(speed) {
     if (speed == "1" &&tl.progress()) {
         StartCircuit();
     }

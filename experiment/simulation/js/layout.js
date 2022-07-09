@@ -92,17 +92,19 @@ function changeTabs(e) {
 
 window.changeTabs = changeTabs;
 
-function updateInstructions() {
-  if (window.currentTab === "task1") {
-    document.getElementById("TaskTitle").innerHTML = "2 x 1 Multiplexer";
-    document.getElementById("TaskDescription").innerHTML = 'Implement a 2-bit Multiplexer using logic gates.'
+// Instruction box
+const updateInstructions = () => {
+  const task = window.currentTab;
+  const instructionBox = document.getElementById("instruction-title");
+  let title = ""; 
+  if (task === "task1") {
+    title = `Instructions<br>Implement a 2 x 1 Multiplexer using logic gates`;
+  } else if (task === "task2") {
+    title = `Instructions<br>Implement a 4 x 1 Multiplexer using 2 x 1 Multiplexers`;
   }
-  else if (window.currentTab === "task2") {
-    document.getElementById("TaskTitle").innerHTML = "4 x 1 Multiplexer";
-    document.getElementById("TaskDescription").innerHTML = 'Implement a 4-bit Multiplexer using 2-bit Multiplexers.'
-  }
-
+  instructionBox.innerHTML = title;
 }
+
 
 // Toolbar
 function updateToolbar() {
@@ -134,13 +136,6 @@ function clearObservations() {
   document.getElementById('result').innerHTML = "";
 
 }
-
-
-// Instruction box
-const instructionBox = document.getElementsByClassName("instructions-box")[0];
-instructionBox.addEventListener("click", (e) => {
-  instructionBox.classList.toggle("expand");
-});
 
 // Making webpage responsive
 
