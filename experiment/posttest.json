@@ -42,7 +42,7 @@
             "difficulty": "intermediate"
         },
         {
-            "question": "4.How many 2*1 AND gated are required to create a 16*1 ANd gate ",
+            "question": "4.How many 2*1 AND gates are required to create a 16*1 AND gate ",
             "answers": {
                 "a": "4",
                 "b": "2",

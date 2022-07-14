@@ -46,7 +46,7 @@
         {
             "question": "4. Which of the following is used as a parallel to serial converter ?",
             "answers": {
-                "a": "Multipler",
+                "a": "Multiplier",
                 "b": "Demultiplexer",
                 "c": "Decoder",
                 "d": "All of these"
@@ -58,9 +58,9 @@
             "difficulty": "intermediate"
         },
         {
-            "question": "5. What is the complexite of using a multiplexer to convert parallel inputs to serial ",
+            "question": "5. What is the complexity of using a multiplexer to convert parallel inputs to serial ",
             "answers": {
-                "a": "O(n^2)",
+                "a": "O(n<sup>2</sup>)",
                 "b": "O(n)",
                 "c": "O(log(n))",
                 "d": "O(1)"
