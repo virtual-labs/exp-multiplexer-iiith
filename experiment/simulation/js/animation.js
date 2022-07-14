@@ -1,3 +1,16 @@
+import { setCoordinates,fillInputDots,fillColor,objectDisappear,objectAppear,setColor,unsetColor,calculateAnd,calculateOr} from "./animation-utility.js";
+
+'use strict'
+
+window.appendInput1 = appendInput1;
+window.appendInput0 = appendInput0;
+window.appendSelect = appendSelect;
+window.simulationStatus = simulationStatus;
+window.restartCircuit = restartCircuit;
+window.setSpeed=setSpeed;
+
+
+
 // Dimensions of working area
 const circuitBoard = document.getElementById("circuit-board");
 const sidePanels = document.getElementsByClassName("v-datalist-container");
@@ -6,494 +19,309 @@ const circuitBoardTop = circuitBoard.offsetTop;
 // Full height of window
 const windowHeight = window.innerHeight;
 const width = window.innerWidth;
-if (width < 1024) {
-  circuitBoard.style.height = 600 + "px";
-} else {
-  circuitBoard.style.height = windowHeight - circuitBoardTop - 20 + "px";
-}
-sidePanels[0].style.height = circuitBoard.style.height;
-
-"use strict";
-
 
 const svg = document.querySelector(".svg");
-const inputpath1 = document.querySelector("#inputpath1");
 const svgns = "http://www.w3.org/2000/svg";
 
+const EMPTY="";
+// stroing the necessary div elements in const
+const status = document.getElementById("play-or-pause");
+const observ = document.getElementById("observations");
+const speed = document.getElementById("speed");
 
-let input1Dot = document.createElementNS(svgns, "circle");
-gsap.set(input1Dot, {
-    attr: { cx: 20, cy: 20, r: 15, fill: "#FF0000" }
-});
-let input2Dot = document.createElementNS(svgns, "circle");
-gsap.set(input2Dot, {
-    attr: { cx: 20, cy: 760, r: 15, fill: "#FF0000" }
-});
-let selectDot1 = document.createElementNS(svgns, "circle");
-gsap.set(selectDot1, {
-    attr: { cx: 20, cy: 390, r: 15, fill: "#FF0000" }
-});
-let selectDot2 = document.createElementNS(svgns, "circle");
-gsap.set(selectDot2, {
-    attr: { cx: 20, cy: 390, r: 15, fill: "#FF0000" }
-});
-
-
-
-const INPUT1 = document.getElementById("input1");
-const INPUT2 = document.getElementById("input2");
-const OUTPUT = document.getElementById("output");
-const SELECT = document.getElementById("select");
-const BUTTON = document.getElementById("play/pause");
-const OBSERV = document.getElementById("Observations");
-
-let input1Text = document.createElementNS(svgns, "text");
-let input2Text = document.createElementNS(svgns, "text");
-let selectText = document.createElementNS(svgns, "text");
-
-input1Text.textContent = 2;
-input2Text.textContent = 2;
-selectText.textContent = 2;
-
-let mainText = document.createElementNS(svgns, "text");
-mainText.textContent = -1;
-
-svg.appendChild(input1Dot);
-svg.appendChild(input2Dot);
-svg.appendChild(selectDot1);
-svg.appendChild(selectDot2);
-
-svg.appendChild(input1Text);
-svg.appendChild(input2Text);
-svg.appendChild(selectText);
-svg.appendChild(mainText);
+// global varaibles declared here
+const objects = [
+    document.getElementById("input1"),
+    document.getElementById("select"),
+    document.getElementById("input0"),
+    document.getElementById("output")
+];
+const textInput = [
+    document.createElementNS(svgns, "text"),
+    document.createElementNS(svgns, "text"),
+    document.createElementNS(svgns, "text")
+];
+const textOutput = [
+    document.createElementNS(svgns, "text")
+];
+const dots = [
+    document.createElementNS(svgns, "circle"),
+    document.createElementNS(svgns, "circle"),
+    document.createElementNS(svgns, "circle"),
+    document.createElementNS(svgns, "circle")
+];
+// First dot emerges from input 1
+// Next 2 dots emerge from select
+// Next dot emerges from input 2
 
 
 
-function allDisAppear() {
-    TweenLite.to(input1Dot, 0, { autoAlpha: 0 });
-    TweenLite.to(input2Dot, 0, { autoAlpha: 0 });
-    TweenLite.to(selectDot1, 0, { autoAlpha: 0 });
-    TweenLite.to(selectDot2, 0, { autoAlpha: 0 });
+// decide help to decide the speed
+let decide = false;
+// circuitStarted is initialised to 0 which depicts that demo hasn't started whereas circuitStarted 1 depicts that the demo has started.
+let circuitStarted = false;
 
 
-
+// function to take care of width
+function demoWidth() {
+    if (width < 1024) {
+        circuitBoard.style.height = "600px";
+    } else {
+        circuitBoard.style.height = `${windowHeight - circuitBoardTop - 20}px`;
+    }
+    sidePanels[0].style.height = circuitBoard.style.height;
 }
-function REBOOT() {
-    input1Text.textContent = 2;
-    input2Text.textContent = 2;
-    selectText.textContent = 2;
 
-    allDisAppear();
-    input1Disappear();
-    input2Disappear();
-    selectDisappear();
-    mainDisappear();
-    gsap.set(INPUT1, {
-
-        fill: "#008000"
-    });
-    gsap.set(INPUT2, {
-
-        fill: "#008000"
-    });
-    gsap.set(SELECT, {
-
-        fill: "#008000"
-    });
-    gsap.set(OUTPUT, {
-
-        fill: "#008000"
-    });
-
-}
-allDisAppear();
-
-function input1Disappear() {
-    TweenLite.to(input1Text, 0, { autoAlpha: 0 });
-}
-function input1Visible() {
-    TweenLite.to(input1Text, 0, { autoAlpha: 1 });
-}
-function input2Disappear() {
-    TweenLite.to(input2Text, 0, { autoAlpha: 0 });
-}
-function input2Visible() {
-    TweenLite.to(input2Text, 0, { autoAlpha: 1 });
-}
-function selectDisappear() {
-    TweenLite.to(selectText, 0, { autoAlpha: 0 });
-}
-function selectVisible() {
-    TweenLite.to(selectText, 0, { autoAlpha: 1 });
+// function to initialise the input text i.e. either 0/1 that gets displayed after user click on them
+function textIOInit() {
+    for( const text of textInput){
+        text.textContent = 2;
+    }
 }
 
 
-function mainVisible() {
-    TweenLite.to(mainText, 0, { autoAlpha: 1 });
+// function to mark the output coordinates
+function outputCoordinates() {
+    setCoordinates(876,394,textOutput[0]);
+    svg.append(textOutput[0]);
 }
 
-function mainDisappear() {
-    TweenLite.to(mainText, 0, { autoAlpha: 0 });
+// function to mark the input dots
+function inputDots() {
+    for(const dot of dots){
+        fillInputDots(dot,20,550,15,"#FF0000");
+        svg.append(dot);
+    }
 }
 
-
-
-function selectDotDisappear() {
-    TweenLite.to(selectDot1, 0, { autoAlpha: 0 });
-    TweenLite.to(selectDot2, 0, { autoAlpha: 0 });
-}
+// function to disappear the input dots
 function inputDotDisappear() {
-    TweenLite.to(input1Dot, 0, { autoAlpha: 0 });
-    TweenLite.to(input2Dot, 0, { autoAlpha: 0 });
-}
-
-
-function makeVisible() {
-    TweenLite.to(input1Dot, 0, { autoAlpha: 1 });
-    TweenLite.to(input2Dot, 0, { autoAlpha: 1 });
-    TweenLite.to(selectDot1, 0, { autoAlpha: 1 });
-    TweenLite.to(selectDot2, 0, { autoAlpha: 1 });
-
-}
-function set(a) {
-    gsap.set(a, {
-
-        fill: "#eeeb22"
-    });
-}//output 0
-function unset(a) {
-    gsap.set(a, {
-
-        fill: "#29e"
-    });
-}//output 1
-function SETTER(a, b) {
-    if (a == 1) {
-        unset(b);
-
-    }
-    else if (a == 0) {
-        set(b);
+    for(const dot of dots){
+        objectDisappear(dot);
     }
 }
-function free() {
-    OBSERV.innerHTML = "";
+
+// function to appear the input dots
+function inputDotVisible() {
+    for(const dot of dots){
+        objectAppear(dot);
+    }
 }
+// function to disappear the output text
+function outputDisappear() {
+    for(const text of textOutput){
+        objectDisappear(text);
+    }
+}
+// function to appear the output text
+function outputVisible() {
+    for(const text of textOutput){
+        objectAppear(text);
+    }
+}
+// function to diappear the input text
+function inputTextDisappear() {
+    for(const text of textInput){
+        objectDisappear(text);
+    }
+}
+
+function clearObservation() {
+    observ.innerHTML = EMPTY;
+}
+function allDisappear() {
+    inputDotDisappear();
+    outputDisappear();
+    inputTextDisappear();
+    for(const object of objects){
+        fillColor(object,"#008000");
+    }
+}
+
 function appendInput1() {
-    if (input1Text.textContent != 0 && tl.progress() == 0) {
-        input1Disappear();
-        input1Text.textContent = 0;
-        svg.appendChild(input1Text);
-        gsap.set(input1Text, {
-            x: 16,
-            y: 24
-        });
-
-        gsap.set(INPUT1, {
-
-            fill: "#eeeb22"
-        });
-        input1Visible();
-        free();
-        SETTER(input1Text.textContent, input1Dot);
-        OBSERV.innerHTML = "Input1 is set to 0";
+    if (textInput[0].textContent !== "0" && timeline.progress() === 0) {
+        changeto0(16,24,0,0);
     }
-    else if (input1Text.textContent != 1 && tl.progress() == 0) {
-        appendInput1To1();
+    else if (textInput[0].textContent !== "1" && timeline.progress() === 0) {
+        changeto1(16,24,0,0);
     }
-}
-function appendInput1To1() {
-    input1Disappear();
-    input1Text.textContent = 1;
-    svg.appendChild(input1Text);
-    gsap.set(input1Text, {
-        x: 16,
-        y: 24
-    });
-    gsap.set(INPUT1, {
-
-        fill: "#29e"
-    });
-    input1Visible();
-    free();
-    SETTER(input1Text.textContent, input1Dot);
-    OBSERV.innerHTML = "input1 is set to 1";
-
+    setter(textInput[0].textContent,dots[0]);
 }
 function appendSelect() {
-    if (selectText.textContent != 0 && tl.progress() == 0) {
-        selectDisappear();
-        selectText.textContent = 0;
-        svg.appendChild(selectText);
-        gsap.set(selectText, {
-            x: 16,
-            y: 394
-        });
-
-        gsap.set(SELECT, {
-
-            fill: "#eeeb22"
-        });
-        selectVisible();
-        free();
-        SETTER(selectText.textContent, selectDot1);
-        SETTER(selectText.textContent, selectDot2);
-        OBSERV.innerHTML = "Select is set to 0";
+    if (textInput[1].textContent !== "0" && timeline.progress() === 0) {
+        changeto0(16,394,1,1);
     }
-    else if (selectText.textContent != 1 && tl.progress() == 0) {
-        appendSelectTo1();
+    else if (textInput[1].textContent !== "1" && timeline.progress() === 0) {
+        changeto1(16,394,1,1);
+    }
+    for(let i=1;i<3;i++){
+        setter(textInput[1].textContent,dots[i]);
     }
 }
-function appendSelectTo1() {
-    selectDisappear();
-    selectText.textContent = 1;
-    svg.appendChild(selectText);
-    gsap.set(selectText, {
-        x: 16,
-        y: 394
-    });
-    gsap.set(SELECT, {
-
-        fill: "#29e"
-    });
-    selectVisible();
-    free();
-    SETTER(selectText.textContent, selectDot1);
-    SETTER(selectText.textContent, selectDot2);
-    OBSERV.innerHTML = "Select is set to 1";
-
-}
-function appendInput2() {
-    if (input2Text.textContent != 0 && tl.progress() == 0) {
-        input2Disappear();
-        input2Text.textContent = 0;
-        svg.appendChild(input2Text);
-        gsap.set(input2Text, {
-            x: 16,
-            y: 764
-        });
-
-        gsap.set(INPUT2, {
-
-            fill: "#eeeb22"
-        });
-        input2Visible();
-        free();
-        SETTER(input2Text.textContent, input2Dot);
-        OBSERV.innerHTML = "Input2 is set to 0";
-
+function appendInput0() {
+    if (textInput[2].textContent !== "0" && timeline.progress() === 0) {
+        changeto0(16,764,2,2);
     }
-    else if (input2Text.textContent != 1 && tl.progress() == 0) {
-        appendInput2To1();
+    else if (textInput[2].textContent !== "1" && timeline.progress() === 0) {
+        changeto1(16,764,2,2);
     }
+    setter(textInput[2].textContent,dots[3]);
 }
-function appendInput2To1() {
-    input2Disappear();
-    input2Text.textContent = 1;
-    svg.appendChild(input2Text);
-    gsap.set(input2Text, {
-        x: 16,
-        y: 764
-    });
-    gsap.set(INPUT2, {
 
-        fill: "#29e"
-    });
-    input2Visible();
-    free();
-    SETTER(input2Text.textContent, input2Dot);
-    OBSERV.innerHTML = "Input2 is set to 1";
+function changeto1(coordinateX,coordinateY,object,textObject) {
+    textInput[textObject].textContent = 1;
+    svg.appendChild(textInput[textObject]);
+    setCoordinates(coordinateX,coordinateY,textInput[textObject]);
+    fillColor(objects[object],"#29e");
+    clearObservation();
+    objectAppear(textInput[textObject]);
+}
 
+function changeto0(coordinateX,coordinateY,object,textObject) {
+    textInput[textObject].textContent = 0;
+    svg.appendChild(textInput[textObject]);
+    setCoordinates(coordinateX,coordinateY,textInput[textObject]);
+    fillColor(objects[object],"#eeeb22");
+    clearObservation();
+    objectAppear(textInput[textObject]);
+}
+let not = "0";
+let or1 = "0";
+let or2 = "0";
+let and = "0";
 
+function stage1() {
+    not = textInput[1].textContent === "1" ? "0" : "1";
+    setter(not,dots[1]); 
+}
+function stage2() {
+    or1 = calculateOr(textInput[0].textContent,not);
+    or2 = calculateOr(textInput[2].textContent,textInput[1].textContent);
+    setter(or1,dots[0]);
+    setter(or2,dots[3]);
+    objectDisappear(dots[1]); 
+    objectDisappear(dots[2]);
+}
+function stage3() {
+    and = calculateAnd(or1,or2);
+    setter(and,dots[0]);
+    objectDisappear(dots[3]);
 }
 
 
-function not() {
-    if (selectText.textContent == 1) {
-        SETTER(0, selectDot1);
-    }
-    if (selectText.textContent == 0) {
-        SETTER(1, selectDot1);
-    }
-}
-let int1;
-let int2;
-function OR1() {
-    if (selectText.textContent == 1 && input1Text.textContent == 0) {
-        SETTER(0, input1Dot);
-        int1 = 0;
-    }
-    else {
-        SETTER(1, input1Dot);
-        int1 = 1;
 
-    }
+function outputSetter(){
+    inputDotDisappear();
+    textOutput[0].textContent = and;
+    setter(textOutput[0].textContent,objects[3]);
 }
-function OR2() {
-    if (selectText.textContent == 0 && input2Text.textContent == 0) {
-        SETTER(0, input2Dot);
-        int2 = 0;
-    }
-    else {
-        SETTER(1, input2Dot);
-        int2 = 1;
-    }
+
+function display() {
+    observ.innerHTML = "Simulation has finished. Press Restart to start again"
 }
-function pit() {
-    console.log(int1 * int2);
-}
-function outputHandler() {
-    if ((int1 * int2) == 0) {
-        gsap.set(OUTPUT, {
 
-            fill: "#eeeb22"
-        });
-        mainText.textContent = 0;
-    }
-    else if ((int1 * int2) == 1) {
-        gsap.set(OUTPUT, {
-
-            fill: "#29e"
-        });
-        mainText.textContent = 1;
-
+function reboot() {
+    for(const text of textInput){
+        text.textContent = 2;
     }
 }
 
-gsap.registerPlugin(MotionPathPlugin);
-
-gsap.set(mainText, {
-
-
-    x: 876,
-    y: 394
-});
-
-
-
-var tl = gsap.timeline({ repeat: 0, repeatDelay: 0 });
-
-
-function fourXspeed() {
-
-    if (input1Text.textContent != 2 && input2Text.textContent != 2 && selectText.textContent != 2 && tl.progress() != 1 && tl.progress() != 0) {
-        tl.resume();
-        OBSERV.innerHTML = "4x speed";
-
-        tl.timeScale(4);
-        decide = 1;
-        BUTTON.innerHTML = "Halt";
+function setter(value, component) {
+    if (value === "1") {
+        unsetColor(component);
     }
-
-
-
+    else if (value === "0") {
+        setColor(component);
+    }
 }
+
 function setSpeed(speed) {
-    if (speed == "1" &&tl.progress()) {
-        StartCircuit();
-    }
-    else if (speed == "2") {
-        doubleSpeed();
-    }
-    else if (speed == "4") {
-        fourXspeed();
+    if (circuitStarted) {
+        timeline.timeScale(parseInt(speed));
+        observ.innerHTML = `${speed}x speed`;
     }
 }
-function doubleSpeed() {
-    if (input1Text.textContent != 2 && input2Text.textContent != 2 && selectText.textContent != 2 && tl.progress() != 1 && tl.progress() != 0) {
-        tl.resume();
 
-        tl.timeScale(2);
-
-        OBSERV.innerHTML = "2x speed";
-        decide = 1;
-        BUTTON.innerHTML = "Halt";
+function restartCircuit() {
+    if (circuitStarted) {
+        circuitStarted = false;
     }
-}
-const SPEED = document.getElementById("speed");
-function StopCircuit() {
-    if (tl.progress() != 1 && tl.progress() != 0) {
-        tl.pause();
-        console.log(tl.progress());
-        decide = 0;
-        BUTTON.innerHTML = "Start";
-        OBSERV.innerHTML = "Simulation has stopped";
-        SPEED.selectedIndex=0;
-    }
-    else if (tl.progress() == 1) {
-        OBSERV.innerHTML = "Please restart the simulation";
-    }
-
+    timeline.seek(0);
+    timeline.pause();
+    allDisappear();
+    reboot();
+    clearObservation();
+    decide = false;
+    status.innerHTML = "Start";
+    observ.innerHTML = "Successfully restored";
+    speed.selectedIndex = 0;
 }
 
-let decide = 0;
-function button() {
-    if (decide == 0) {
-        StartCircuit();
-
+function simulationStatus() {
+    if (!decide) {
+        startCircuit();
     }
-    else if (decide == 1) {
-        StopCircuit();
-
+    else if (decide) {
+        stopCircuit();
     }
 }
-function StartCircuit() {
-    if (input1Text.textContent == 2 || input2Text.textContent == 2 || selectText.textContent == 2) {
-        OBSERV.innerHTML = "Please select the input";
+function stopCircuit() {
+    if (timeline.time() !== 0 && timeline.progress() !== 1) {
+        timeline.pause();
+        observ.innerHTML = "Simulation has been stopped.";
+        decide = false;
+        status.innerHTML = "Start";
+        speed.selectedIndex = 0;
     }
-    if (input1Text.textContent != 2 && input2Text.textContent != 2 && selectText.textContent != 2 && tl.progress() != 1) {
-        tl.resume();
-        tl.timeScale(1);
-
-
-        decide = 1;
-        BUTTON.innerHTML = "Halt";
-        OBSERV.innerHTML = "Simulation has started";
-        SPEED.selectedIndex=0;
+    else if (timeline.progress() === 1) {
+        observ.innerHTML = "Please Restart the simulation";
     }
-    else if (tl.progress() == 1) {
-        OBSERV.innerHTML = "Please restart the simulation";
+}
+function startCircuit() {
+    for(const text of textInput){
+        if (text.textContent === "2") {
+            observ.innerHTML = "Please set the input values";
+            return;
+        }
     }
-
+    if (timeline.progress() !== 1) {
+        if (!circuitStarted) {
+            circuitStarted = true;
+        }
+        timeline.play();
+        timeline.timeScale(1);
+        observ.innerHTML = "Simulation has started.";
+        decide = true;
+        status.innerHTML = "Pause";
+        speed.selectedIndex = 0;
+    }
+    else if (timeline.progress() === 1) {
+        observ.innerHTML = "Please Restart the simulation";
+    }
 }
 
-function RestartCircuit() {
-
-    tl.seek(0);
-    REBOOT();
-    tl.pause();
-    decide = 0;
-    BUTTON.innerHTML = "Start";
 
 
+// all the execution begin here
+let timeline = gsap.timeline({ repeat: 0, repeatDelay: 0 });
+gsap.registerPlugin(MotionPathPlugin);
+demoWidth();
+// calling all the functions that are going to initialise 
+textIOInit();
+outputCoordinates();
+inputDots();
+outputDisappear();
 
+timeline.add(inputDotVisible, 0);
+timeline.add(stage1,10);
+timeline.add(stage2,12.5);
+timeline.add(stage3,20);
+timeline.add(outputSetter,25);
+timeline.add(outputVisible,25);
+timeline.eventCallback("onComplete", outputVisible);
+timeline.eventCallback("onComplete", display);
 
-    OBSERV.innerHTML = "Successfully Restored";
-    SPEED.selectedIndex=0;
-
-}
-function batado() {
-    OBSERV.innerHTML = "Simulation has finished. Press Restart to start again";
-}
-tl.add(makeVisible, 0);
-tl.add(not, 10);
-tl.add(selectDotDisappear, 12);
-tl.add(OR1, 12.5);
-tl.add(OR2, 12.5);
-tl.add(inputDotDisappear, 20);
-tl.add(outputHandler, 22);
-tl.add(pit, 20)
-tl.add(mainVisible, 22);
-tl.add(batado, 22);
-
-mainDisappear();
-
-
-tl.pause();
-allDisAppear();
-
-tl.to(input1Dot, {
+timeline.to(dots[0], {
     motionPath: {
         path: "#path1",
         align: "#path1",
@@ -509,7 +337,7 @@ tl.to(input1Dot, {
     paused: false,
 
 }, 0);
-tl.to(selectDot1, {
+timeline.to(dots[1], {
     motionPath: {
         path: "#path3",
         align: "#path3",
@@ -525,24 +353,7 @@ tl.to(selectDot1, {
     paused: false,
 
 }, 0);
-tl.to(input2Dot, {
-    motionPath: {
-        path: "#path2",
-        align: "#path2",
-        autoRotate: true,
-        alignOrigin: [0.5, 0.5]
-    },
-
-    duration: 20,
-    repeat: 0,
-    repeatDelay: 3,
-    yoyo: true,
-    ease: "none",
-    paused: false,
-
-}, 0);
-
-tl.to(selectDot2, {
+timeline.to(dots[2], {
     motionPath: {
         path: "#path4",
         align: "#path4",
@@ -558,3 +369,40 @@ tl.to(selectDot2, {
     paused: false,
 
 }, 0);
+timeline.to(dots[3], {
+    motionPath: {
+        path: "#path2",
+        align: "#path2",
+        autoRotate: true,
+        alignOrigin: [0.5, 0.5]
+    },
+
+    duration: 20,
+    repeat: 0,
+    repeatDelay: 3,
+    yoyo: true,
+    ease: "none",
+    paused: false,
+
+}, 0);
+timeline.to(dots[0], {
+    motionPath: {
+        path: "#path5",
+        align: "#path5",
+        autoRotate: true,
+        alignOrigin: [0.5, 0.5]
+    },
+
+    duration: 5,
+    delay: 20,
+    repeat: 0,
+    repeatDelay: 3,
+    yoyo: true,
+    ease: "none",
+    paused: false,
+
+}, 0);
+
+
+timeline.pause();
+inputDotDisappear();

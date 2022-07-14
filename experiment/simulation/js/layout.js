@@ -36,7 +36,7 @@ export const setPosition = ({ top, left }) => {
   toggleMenu("show");
 };
 
-window.addEventListener("click", e => {
+window.addEventListener("click", () => {
   if (menuVisible) toggleMenu("hide");
   window.selectedComponent = null;
   window.componentType = null;

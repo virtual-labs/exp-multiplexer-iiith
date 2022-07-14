@@ -58,8 +58,8 @@
                 <option value="2">2x</option>
                 <option value="4">4x</option>
             </select>
-            <button class="v-button" id="play/pause" onclick="button()">Start</button>
-            <button class="v-button" id="restart" onclick="RestartCircuit()">Reset</button>
+            <button class="v-button" id="play-or-pause" onclick="simulationStatus()">Start</button>
+            <button class="v-button" id="restart" onclick="restartCircuit()">Reset</button>
         </div>
     </div>
     <div class="columns is-centered is-flex is-flex-direction-row is-flex-wrap-wrap is-align-content-start">
@@ -103,14 +103,14 @@
                             style="fill:green;stroke:rgb(68, 68, 119);stroke-width:3;fill-opacity:1;stroke-opacity:1" />
                         <circle id="select" cx="20" cy="390" r="15" onclick="appendSelect()"
                             style="fill:green;stroke:rgb(68, 68, 119);stroke-width:3;fill-opacity:1;stroke-opacity:1" />
-                        <circle id="input2" cx="20" cy="760" r="15" onclick="appendInput2()"
+                        <circle id="input0" cx="20" cy="760" r="15" onclick="appendInput0()"
                             style="fill:green;stroke:rgb(68, 68, 119);stroke-width:3;fill-opacity:1;stroke-opacity:1" />
                         <circle id="output" cx="880" cy="390" r="15"
                             style="fill:green;stroke:rgb(68, 68, 119);stroke-width:3;fill-opacity:1;stroke-opacity:1" />
-                        <text font-size="0.7em" x="04" y="46" fill="black">INPUT 1</text>
-                        <text font-size="0.7em" x="04" y="370" fill="black">SELECT</text>
-                        <text font-size="0.7em" x="04" y="737" fill="black">INPUT 2</text>
-                        <text font-size="0.7em" x="857" y="370" fill="black">OUTPUT</text>
+                        <text font-size="1.2em" x="04" y="55" fill="black">INPUT 1</text>
+                        <text font-size="1.2em" x="04" y="370" fill="black">SELECT</text>
+                        <text font-size="1.2em" x="04" y="737" fill="black">INPUT 0</text>
+                        <text font-size="1.2em" x="857" y="370" fill="black">OUTPUT</text>
                         <text font-size="0.8em" x="380" y="184" fill="black">NOT</text>
                         <text font-size="1em" x="530" y="168" fill="black">OR</text>
                         <text font-size="1em" x="530" y="618" fill="black">OR</text>
@@ -123,17 +123,13 @@
             <div class="v-datalist-container components-list">
                 <div class="v-datalist-title">Observations</div>
                 <div class="v-datalist-row">
-                    <div id="Observations">
-
-                    </div>
-                    <div id="result"></div>
+                    <div id="observations"></div>
                 </div>
-
             </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
-    <script src="js/animation.js"></script>
+    <script type="module" src="js/animation.js"></script>
 </body>
 
 </html>
