@@ -1,0 +1,77 @@
+{
+    "version": 2.0,
+    "questions": [
+        {
+            "question": "1. What is an application of multiplexers ?",
+            "answers": {
+                "a": "ALU",
+                "b": "Computer Memory",
+                "c": "Communication System",
+                "d": "All of these"
+            },
+            "correctAnswer": "d",
+            "explanations": {
+                
+            },
+            "difficulty": "beginner"
+        },
+        {
+            "question": "2. What is the logic gates used in Multiplexers ?",
+            "answers": {
+                "a": "NOT",
+                "b": "AND",
+                "c": "OR",
+                "d": "All of these"
+            },
+            "correctAnswer": "d",
+            "explanations": {
+                
+            },
+            "difficulty": "beginner"
+        },
+        {
+            "question": "3. Multiplexer is what kind of a circuit ?",
+            "answers": {
+                "a": "Sequential circuit",
+                "b": "Combinational circuit",
+                "c": "Both",
+                "d": "None of these"
+            },
+            "correctAnswer": "b",
+            "explanations": {
+               
+            },
+            "difficulty": "intermediate"
+        },
+        {
+            "question": "4. Which of the following is used as a parallel to serial converter ?",
+            "answers": {
+                "a": "Multiplier",
+                "b": "Demultiplexer",
+                "c": "Decoder",
+                "d": "All of these"
+            },
+            "correctAnswer": "a",
+            "explanations": {
+               
+            },
+            "difficulty": "intermediate"
+        },
+        {
+            "question": "5. What is the complexity of using a multiplexer to convert parallel inputs to serial ",
+            "answers": {
+                "a": "O(n<sup>2</sup>)",
+                "b": "O(n)",
+                "c": "O(log(n))",
+                "d": "O(1)"
+            },
+            "correctAnswer": "c",
+            "explanations": {
+                
+                "c": "2 power n inputs are required to generate 1 output in n*1 multiplexer"
+                
+            },
+            "difficulty": "advanced"
+        }
+    ]
+}
