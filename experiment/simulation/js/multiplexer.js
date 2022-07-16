@@ -1,7 +1,6 @@
-// import { getOutputFA } from './fa.js';
 import { registerGate, jsPlumbInstance } from "./main.js";
 import { setPosition } from "./layout.js";
-import { gates } from "./gate.js";
+import { clearResult, gates, printErrors } from "./gate.js";
 import {computeAnd, computeOr} from "./validator.js";
 'use strict';
 // let fullAdder = {}
@@ -133,55 +132,53 @@ export function getResultMux(mux) {
 }
 
 export function checkConnectionsMux() {
-    let correctConnection = true;
     for (let muxID in multiplexer) {
         const gate = multiplexer[muxID];
+        const id = document.getElementById(gate.id);
         // For Multiplexer objects
         // Check if all the outputs are connected
         if (!gate.outputIsConnected) {
-            correctConnection = false;
-            break;
+            printErrors("Output of Multiplexer not connected\n",id);
+            return false;
         }
 
         // Check if all the inputs are connected
-        if (gate.a0 == null || gate.a0.length == 0) {
-            correctConnection = false;
-            break;
+        // console.log(gate);
+        if (gate.a0 == null || gate.a0.length === 0) {
+            printErrors("A0 of Multiplexer not connected properly\n",id);
+            return false;
         }
-        if (gate.b0 == null || gate.b0.length == 0) {
-            correctConnection = false;
-            break;
+        if (gate.b0 == null || gate.b0.length === 0) {
+            printErrors("B0 of Multiplexer not connected properly\n",id);
+            return false;
         }
-        if (gate.selectLine == null || gate.selectLine.length == 0) {
-            correctConnection = false;
-            break;
+        if (gate.selectLine == null || gate.selectLine.length === 0) {
+            printErrors("Select Line of Multiplexer not connected properly\n",id);
+            return false;
         }
     }
     for (let gateId in gates) {
         const gate = gates[gateId];
+        const id = document.getElementById(gate.id);
         if (gate.isInput) {
             if (!gate.isConnected) {
-                correctConnection = false;
-                break;
+                printErrors("Highlighted component not connected properly\n",id);
+                return false;
             }
         }
         if (gate.isOutput) {
             if (gate.inputs.length === 0) {
-                correctConnection = false;
-                break;
+                printErrors("Highlighted component not connected properly\n",id);
+                return false;
             }
         }
     }
 
-    if (correctConnection) {
-        return true;
-    } else {
-        alert("Connections are not correct");
-        return false;
-    }
+    return true;
 }
 
 export function simulateMux() {
+    clearResult();
     if (!checkConnectionsMux()) {
         return;
     }
@@ -221,7 +218,8 @@ export function simulateMux() {
 
 export function testSimulationMux(mux, gates) {
     if (!checkConnectionsMux()) {
-        return;
+        document.getElementById("table-body").innerHTML = "";
+        return false;
     }
 
     // reset output in gate
@@ -248,6 +246,7 @@ export function testSimulationMux(mux, gates) {
         );
         return finalOutputs[key][0].outputName;
     }
+
 }
 
 export function deleteMux(id) {
@@ -256,7 +255,6 @@ export function deleteMux(id) {
     jsPlumbInstance._removeElement(document.getElementById(mux.id));
     for (let key in multiplexer) {
         if (multiplexer[key].id == id) {
-            delete multiplexer[key];
             continue;
         }
         if (multiplexer[key].a0[0] === mux) {
@@ -276,6 +274,9 @@ export function deleteMux(id) {
             gates[key].inputs = [];
         }
     }
+
+
+    delete multiplexer[id];
 }
 
 function getOutputName(mux) {

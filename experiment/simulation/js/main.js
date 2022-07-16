@@ -363,7 +363,7 @@ export function registerGate(id, gate) {
                 connectionsDetachable: false,
                 uuid: "input:0:" + id,
                 overlays: [
-                    { type: "Label", options: { label: "SelectLine", id: "s0", location: [4, 0.2] } }
+                    { type: "Label", options: { label: "Select", id: "s0", location: [4, 0.2] } }
                 ],
             })
         );

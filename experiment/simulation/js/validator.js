@@ -46,14 +46,16 @@ export function twoBitMultiplexerTest(inputA, inputB, select, outputId)  // This
         const calculatedOutput = computeOr(computeAnd(input0.output, !selectLine.output), computeAnd(input1.output, selectLine.output)) ? 1 : 0;
 
         // simulate the circuit
-        testSimulation(gates_list);
+        if(!testSimulation(gates_list)){
+            return;
+        }
         const output = gates_list[outputId].output ? 1 : 0;
 
-        dataTable += `<tr><th> ${binary[2]} </th><th> ${binary[1]}</th><th> ${binary[0]}</th><td> ${calculatedOutput}</td><td> ${output}</td></tr>`
-
+        let className = calculatedOutput === output ? "success-table" : "failure-table";
         if (calculatedOutput != output) {
             circuitIsCorrect = false;
         }
+        dataTable += `<tr class="bold-table"><th> ${binary[2]} </th><th> ${binary[1]}</th><th> ${binary[0]}</th><td> ${calculatedOutput}</td><td class="${className}"> ${output}</td></tr>`
     }
 
     const table_elem = document.getElementById('table-body');
@@ -110,27 +112,34 @@ export function fourBitMultiplexerTest(i0, i1, i2, i3, s1, s0, OutputFinal) // I
 
 
         // simulate the circuit
-        let outputName = testSimulationMux(mux, gates_list)
+        const output = testSimulationMux(mux, gates_list);
+        if(output == false)
+        {
+            return;
+        }
+        let outputName = output;
         const muxOut = gates_list[OutputFinal].output;
 
+        let className = calculatedOutput === muxOut ? "success-table" : "failure-table";
+        if (muxOut != calculatedOutput) {
+            circuitIsCorrect = false;
+        }
+
         if (binary[1] === "0" && binary[0] === "0" && cnt1 === 0) {
-            dataTable += `<tr><th>${binary[1]}</th><th>${binary[0]}</th><th> I0 </th><th> ${outputName}`
+            dataTable += `<tr class="bold-table"><th>${binary[1]}</th><th>${binary[0]}</th><th> I0 </th><td class="${className}">${outputName}</td></tr>`
             cnt1++;
         }
         else if (binary[1] === "1" && binary[0] === "0" && cnt2 === 0) {
-            dataTable += `<tr><th>${binary[1]}</th><th>${binary[0]}</th><th> I1 </th><th>${outputName}`
+            dataTable += `<tr class="bold-table"><th>${binary[1]}</th><th>${binary[0]}</th><th> I1 </th><td class="${className}">${outputName}</td></tr>`
             cnt2++;
         }
         else if (binary[1] === "1" && binary[0] === "1" && cnt3 === 0) {
-            dataTable += `<tr><th>${binary[1]}</th><th>${binary[0]}</th><th> I3 </th><th>${outputName}`
+            dataTable += `<tr class="bold-table"><th>${binary[1]}</th><th>${binary[0]}</th><th> I3 </th><td class="${className}">${outputName}</td></tr>`
             cnt3++;
         }
         else if (binary[1] === "0" && binary[0] === "1" && cnt4 === 0) {
-            dataTable += `<tr><th>${binary[1]}</th><th>${binary[0]}</th><th> I2 </th><th>${outputName}`
+            dataTable += `<tr class="bold-table"><th>${binary[1]}</th><th>${binary[0]}</th><th> I2 </th><td class="${className}">${outputName}</td></tr>`
             cnt4++;
-        }
-        if (muxOut != calculatedOutput) {
-            circuitIsCorrect = false;
         }
     }
 

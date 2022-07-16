@@ -286,6 +286,11 @@ svg.wire path {
   font-weight: bold;
 }
 
+.highlight {
+  border:3px solid red;
+  box-shadow: 0 0 10px #719ECE;
+}
+
 /* for dropping instruction box  */
 
 .instructions-box {
@@ -303,7 +308,7 @@ svg.wire path {
   justify-content: flex-start;
 }
 
-.speed-box {
+.speed-box{
   border:1px solid black;
   color:black;
   background-color:white;
@@ -312,4 +317,43 @@ svg.wire path {
   border-radius:1em;
   padding:.5em 1.0em;
   cursor:pointer;
+}
+.wire-demo{
+  stroke-width: 3px;
+  fill: none;
+  stroke: black;
+}
+
+.gate-demo{
+  stroke-width: 3px;
+  fill: #29e;
+  stroke: black;
+}
+
+.text-demo{
+  font-size: 1.2em;
+  fill: black;
+}
+
+.fulladder-demo{
+  width: 100px;
+  height: 100px;
+}
+
+/* observation table */
+
+.success-table{
+  font-size: 1rem;
+  color: rgb(31, 170, 31);
+  font-weight: bold;
+}
+
+.failure-table{
+  font-size: 1rem;
+  color: rgb(228, 23, 23);
+  font-weight: bold;
+}
+
+.bold-table{
+  font-weight: bold;
 }
