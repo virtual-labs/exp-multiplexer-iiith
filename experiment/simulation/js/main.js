@@ -363,7 +363,7 @@ export function registerGate(id, gate) {
                 connectionsDetachable: false,
                 uuid: "input:0:" + id,
                 overlays: [
-                    { type: "Label", options: { label: "Select", id: "s0", location: [4, 0.2] } }
+                    { type: "Label", options: { label: "Select", id: "s0", location: [3, 0.4] } }
                 ],
             })
         );
@@ -376,7 +376,7 @@ export function registerGate(id, gate) {
                 connectionsDetachable: false,
                 uuid: "output:1:" + id,
                 overlays: [
-                    { type: "Label", options: { label: "Output", id: "finalOutput", location: [0.3, -1.7] } }
+                    { type: "Label", options: { label: "Output", id: "finalOutput", location: [0.3, -1.3] } }
                 ],
             })
         );
