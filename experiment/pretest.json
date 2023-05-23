@@ -16,7 +16,7 @@
             "difficulty": "beginner"
         },
         {
-            "question": "2. What is the logic gates used in Multiplexers ?",
+            "question": "2. What is/are the logic gates used in Multiplexers ?",
             "answers": {
                 "a": "NOT",
                 "b": "AND",

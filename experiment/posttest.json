@@ -28,7 +28,7 @@
             "difficulty": "intermediate"
         },
         {
-            "question": "3. why is n*1 AND gate required in a multiplexer n*1 MUX",
+            "question": "3. Why is an nx1 AND gate required in an nx1 MUX ?",
             "answers": {
                 "a": "To convert n inputs in a single output",
                 "b": "To make sure that each input has the same value",
