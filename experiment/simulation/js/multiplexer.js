@@ -143,13 +143,12 @@ export function checkConnectionsMux() {
         }
 
         // Check if all the inputs are connected
-        // console.log(gate);
         if (gate.a0 == null || gate.a0.length === 0) {
-            printErrors("A0 of Multiplexer not connected properly\n",id);
+            printErrors("I0 of Multiplexer not connected properly\n",id);
             return false;
         }
         if (gate.b0 == null || gate.b0.length === 0) {
-            printErrors("B0 of Multiplexer not connected properly\n",id);
+            printErrors("I1 of Multiplexer not connected properly\n",id);
             return false;
         }
         if (gate.selectLine == null || gate.selectLine.length === 0) {
