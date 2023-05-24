@@ -80,6 +80,9 @@ export const connectMultiplexer = function () {
             return false;
         } else if (start_uuid === "output" && end_uuid === "output") {
             return false;
+        } if (toEndpoint.connections.length > 0) {
+            // If it already has a connection, do not establish a new connection
+            return false;
         } else {
             jsPlumbInstance.connect({ uuids: [fromEndpoint.uuid, toEndpoint.uuid], paintStyle:{ stroke: wireColours[num_wires], strokeWidth:4 }});
             num_wires++;
