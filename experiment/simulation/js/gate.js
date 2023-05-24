@@ -196,8 +196,17 @@ function setInput(event) {
 window.setInput = setInput;
 
 export function clearResult() {
+  // clear result
   const result = document.getElementById("result");
   result.innerHTML = "";
+
+  // clear table-body
+  const table_elem = document.getElementById("table-body");
+  table_elem.innerHTML = "";
+
+  // clear table-head
+  const table_elem_head = document.getElementById("table-head");
+  table_elem_head.innerHTML = "";
 }
 
 export function printErrors(message,objectId) {
