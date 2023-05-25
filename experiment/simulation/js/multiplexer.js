@@ -281,6 +281,17 @@ export function deleteMux(id) {
         }
     }
 
+    for (let elem in gates) {
+        if (gates[elem].inputs.includes(mux)) {
+          gates[elem].removeInput(mux);
+        }
+        if(gates[elem].outputs.includes(mux)) {
+          gates[elem].removeOutput(mux);
+          if(gates[elem].isInput && gates[elem].outputs.length ==0)
+          gates[elem].setConnected(false);
+        }
+      }
+
 
     delete multiplexer[id];
 }

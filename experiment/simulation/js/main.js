@@ -50,6 +50,9 @@ export const connectGate = function () {
             return false;
         } else if (start_uuid === "output" && end_uuid === "output") {
             return false;
+        } else if ((end_uuid==="input" && toEndpoint.connections.length > 0) || (start_uuid==="input" && fromEndpoint.connections.length>1)) {
+            // If it already has a connection, do not establish a new connection
+            return false;
         } else {
             jsPlumbInstance.connect({ uuids: [fromEndpoint.uuid, toEndpoint.uuid], paintStyle:{ stroke: wireColours[num_wires], strokeWidth:4 }});
             num_wires++;
@@ -58,10 +61,12 @@ export const connectGate = function () {
                 let input = gatejs.gates[fromEndpoint.elementId];
                 input.isConnected = true;
                 gatejs.gates[toEndpoint.elementId].addInput(input);
+                input.addOutput(gatejs.gates[toEndpoint.elementId]);
             } else if (end_uuid === "output") {
                 let input = gatejs.gates[toEndpoint.elementId];
                 input.isConnected = true;
                 gatejs.gates[fromEndpoint.elementId].addInput(input);
+                input.addOutput(gatejs.gates[fromEndpoint.elementId]);
             }
 
         }
@@ -80,7 +85,7 @@ export const connectMultiplexer = function () {
             return false;
         } else if (start_uuid === "output" && end_uuid === "output") {
             return false;
-        } if (toEndpoint.connections.length > 0) {
+        } else if ((end_uuid==="input" && toEndpoint.connections.length > 0) || (start_uuid==="input" && fromEndpoint.connections.length>1)) {
             // If it already has a connection, do not establish a new connection
             return false;
         } else {
@@ -140,6 +145,7 @@ export const connectMultiplexer = function () {
                     else if (Object.keys(fromEndpoint.overlays)[0].includes("s0")) {
                         multiplexerjs.multiplexer[fromEndpoint.elementId].setSelectLine([input, pos]);
                     }
+                    input.addOutput(multiplexerjs.multiplexer[fromEndpoint.elementId]);
                   
                 }
             }
@@ -157,6 +163,7 @@ export const connectMultiplexer = function () {
                     else if (Object.keys(toEndpoint.overlays)[0].includes("s0")) {
                         multiplexerjs.multiplexer[toEndpoint.elementId].setSelectLine([input, pos]);
                     }
+                    input.addOutput(multiplexerjs.multiplexer[toEndpoint.elementId]);
                 }
             }
             else if (start_type === "Multiplexer" && end_type === "Output") {
@@ -191,6 +198,7 @@ export const connectMultiplexer = function () {
                     let output = gatejs.gates[toEndpoint.elementId];
                     input.setConnected(true);
                     output.addInput(input);
+                    input.addOutput(output);
                 }
             }
             else if (start_type === "Output" && end_type === "Input") {
@@ -199,6 +207,7 @@ export const connectMultiplexer = function () {
                     let output = gatejs.gates[fromEndpoint.elementId];
                     input.setConnected(true);
                     output.addInput(input);
+                    input.addOutput(output);
                 }
             }
         }

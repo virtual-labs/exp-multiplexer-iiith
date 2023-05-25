@@ -1,6 +1,7 @@
 import { registerGate, jsPlumbInstance } from "./main.js";
 import { setPosition } from "./layout.js";
 import { twoBitMultiplexerTest, fourBitMultiplexerTest, computeAnd, computeOr, computeNand, computeNor, computeXor, computeXnor } from "./validator.js";
+import { checkConnectionsMux } from "./multiplexer.js";
 
 'use strict';
 
@@ -24,6 +25,7 @@ export class Gate {
     this.inputPoints = [];
     this.outputPoints = [];
     this.inputs = []; // List of input gates
+    this.outputs=[];
     this.output = null; // Output value
     this.isInput = false;
     this.isOutput = false;
@@ -35,12 +37,28 @@ export class Gate {
   addInput(gate) {
     this.inputs.push(gate);
   }
+
+  addOutput(gate) {
+    this.outputs.push(gate);
+  }
+
   removeInput(gate) {
-    let index = this.inputs.indexOf(gate);
-    if (index > -1) {
-      this.inputs.splice(index, 1);
+    for (let i = this.inputs.length - 1; i >= 0; i--) {
+    if (this.inputs[i] === gate) {
+      this.inputs.splice(i, 1);
+    }
     }
   }
+
+  removeOutput(gate) {
+    // Find and remove all occurrences of gate
+  for (let i = this.outputs.length - 1; i >= 0; i--) {
+    if (this.outputs[i] === gate) {
+      this.outputs.splice(i, 1);
+    }
+  }
+  }
+
   updatePosition(id) {
     this.positionY =
       window.scrollY + document.getElementById(id).getBoundingClientRect().top; // Y
@@ -302,9 +320,32 @@ export function testSimulation(gates) {
 export function submitCircuit() {
   clearResult();
   document.getElementById("table-body").innerHTML = "";
+
+  
+  // Refresh the input bit values to default 1 and output bit values to default empty black circles after submitting
+  for (let gateId in gates) {
+    const gate = gates[gateId];
+    if (gate.isInput) {
+        gate.setOutput(true);
+        let element = document.getElementById(gate.id);
+        element.className = "high";
+        element.childNodes[0].innerHTML = "1";
+    }
+    if(gate.isOutput)
+    {
+        gate.setOutput(null);
+        let element = document.getElementById(gate.id);
+        element.className = "output";
+        element.childNodes[0].innerHTML = "";
+    }
+    }
   if (window.currentTab === "task1") {
+    if(!checkConnections())
+    return;
     twoBitMultiplexerTest("Input-0", "Input-1", "Input-2", "Output-3");
   } else if (window.currentTab === "task2") {
+    if(!checkConnectionsMux())
+    return;
     fourBitMultiplexerTest(
       "Input-0",
       "Input-1",
@@ -315,25 +356,6 @@ export function submitCircuit() {
       "Output-8"
     );
   }
-
-      // Refresh the input bit values to default 1 and output bit values to default empty black circles after submitting
-      for (let gateId in gates) {
-        const gate = gates[gateId];
-        if (gate.isInput) {
-            gate.setOutput(true);
-            let element = document.getElementById(gate.id);
-            element.className = "high";
-            element.childNodes[0].innerHTML = "1";
-        }
-
-        if(gate.isOutput)
-        {
-            gate.setOutput(null);
-            let element = document.getElementById(gate.id);
-            element.className = "output";
-            element.childNodes[0].innerHTML = "";
-        }
-    }
 }
 window.submitCircuit = submitCircuit;
 
@@ -344,6 +366,11 @@ export function deleteElement(gateid) {
   for (let elem in gates) {
     if (gates[elem].inputs.includes(gate)) {
       gates[elem].removeInput(gate);
+    }
+    if(gates[elem].outputs.includes(gate)) {
+      gates[elem].removeOutput(gate);
+      if(gates[elem].isInput && gates[elem].outputs.length ==0)
+      gates[elem].setConnected(false);
     }
   }
   delete gates[gateid];
