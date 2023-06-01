@@ -246,7 +246,7 @@ export function checkConnections() {
       if (gate.inputPoints.length != gate.inputs.length) {
           printErrors("Highlighted component not connected properly\n",id);
           return false;
-      } else if (gate.isConnected === false && gate.isOutput === false) {
+      } else if ((gate.isConnected === false || gate.outputs.length===0) && gate.isOutput === false) {
           printErrors("Highlighted component not connected properly\n",id);
           return false;
       }

@@ -112,6 +112,7 @@ export const connectMultiplexer = function () {
                     else if (Object.keys(toEndpoint.overlays)[0].includes("s0")) {
                         multiplexerjs.multiplexer[toEndpoint.elementId].setSelectLine([input, pos]);
                     }
+                    input.addOutput(multiplexerjs.multiplexer[toEndpoint.elementId]);
                    
                 } else if (end_uuid === "output") {
                     let input = multiplexerjs.multiplexer[toEndpoint.elementId];
@@ -129,6 +130,7 @@ export const connectMultiplexer = function () {
                     else if (Object.keys(fromEndpoint.overlays)[0].includes("s0")) {
                         multiplexerjs.multiplexer[fromEndpoint.elementId].setSelectLine([input, pos]);
                     }
+                    input.addOutput(multiplexerjs.multiplexer[fromEndpoint.elementId]);
                 }
             }
             else if (start_type === "Multiplexer" && end_type === "Input") {
@@ -177,6 +179,7 @@ export const connectMultiplexer = function () {
                     input.setConnected(true);
                     output.addInput(input);
                     multiplexerjs.finalOutputs[toEndpoint.elementId] = [input, pos];
+                    input.addOutput(output);
                 }
             }
             else if (start_type === "Output" && end_type === "Multiplexer") {
@@ -190,6 +193,7 @@ export const connectMultiplexer = function () {
                     input.setConnected(true);
                     output.addInput(input);
                     multiplexerjs.finalOutputs[fromEndpoint.elementId] = [input, pos];
+                    input.addOutput(output);
                 }
             }
             else if (start_type === "Input" && end_type === "Output") {

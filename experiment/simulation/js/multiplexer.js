@@ -25,6 +25,7 @@ export class Multiplexer {
         this.outputName = "";
         this.selectLine = [];
         this.out = [];
+        this.outputs=[]; // list of gates to which output of mux is connected
         this.inputPoints = [];
         this.outputPoints = [];
         this.outputIsConnected = false;
@@ -66,6 +67,20 @@ export class Multiplexer {
 
     setSelectLine(SelectLine) {
         this.selectLine = SelectLine;
+    }
+
+    addOutput(gate){
+        this.outputs.push(gate);
+    }
+
+    removeOutput(gate)
+    {
+        // Find and remove all occurrences of gate
+        for (let i = this.outputs.length - 1; i >= 0; i--) {
+        if (this.outputs[i] === gate) {
+        this.outputs.splice(i, 1);
+            }
+        }
     }
 
     addInputPoints(input) {
@@ -137,7 +152,7 @@ export function checkConnectionsMux() {
         const id = document.getElementById(gate.id);
         // For Multiplexer objects
         // Check if all the outputs are connected
-        if (!gate.outputIsConnected) {
+        if (!gate.outputIsConnected || gate.outputs.length===0) {
             printErrors("Output of Multiplexer not connected\n",id);
             return false;
         }
@@ -160,7 +175,7 @@ export function checkConnectionsMux() {
         const gate = gates[gateId];
         const id = document.getElementById(gate.id);
         if (gate.isInput) {
-            if (!gate.isConnected) {
+            if (!gate.isConnected || gate.outputs.length===0) {
                 printErrors("Highlighted component not connected properly\n",id);
                 return false;
             }
@@ -271,6 +286,9 @@ export function deleteMux(id) {
         }
         if (multiplexer[key].selectLine[0] === mux) {
             multiplexer[key].selectLine = null;
+        }
+        if(multiplexer[key].outputs.includes(mux)){
+            multiplexer[key].removeOutput(mux);
         }
     }
 
