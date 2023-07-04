@@ -1,13 +1,13 @@
-import { setCoordinates,fillInputDots,fillColor,objectDisappear,objectAppear,setColor,unsetColor,calculateAnd,calculateOr} from "./animation-utility.js";
+import { setCoordinates, fillInputDots, fillColor, objectDisappear, objectAppear, setColor, unsetColor, calculateAnd, calculateOr } from "./animation-utility.js";
 
-'use strict'
+'use strict';
 
 window.appendInput1 = appendInput1;
 window.appendInput0 = appendInput0;
 window.appendSelect = appendSelect;
 window.simulationStatus = simulationStatus;
 window.restartCircuit = restartCircuit;
-window.setSpeed=setSpeed;
+window.setSpeed = setSpeed;
 
 
 
@@ -23,7 +23,7 @@ const width = window.innerWidth;
 const svg = document.querySelector(".svg");
 const svgns = "http://www.w3.org/2000/svg";
 
-const EMPTY="";
+const EMPTY = "";
 // stroing the necessary div elements in const
 const status = document.getElementById("play-or-pause");
 const observ = document.getElementById("observations");
@@ -74,7 +74,7 @@ function demoWidth() {
 
 // function to initialise the input text i.e. either 0/1 that gets displayed after user click on them
 function textIOInit() {
-    for( const text of textInput){
+    for (const text of textInput) {
         text.textContent = 2;
     }
 }
@@ -82,46 +82,46 @@ function textIOInit() {
 
 // function to mark the output coordinates
 function outputCoordinates() {
-    setCoordinates(876,394,textOutput[0]);
+    setCoordinates(876, 394, textOutput[0]);
     svg.append(textOutput[0]);
 }
 
 // function to mark the input dots
 function inputDots() {
-    for(const dot of dots){
-        fillInputDots(dot,20,550,15,"#FF0000");
+    for (const dot of dots) {
+        fillInputDots(dot, 20, 550, 15, "#FF0000");
         svg.append(dot);
     }
 }
 
 // function to disappear the input dots
 function inputDotDisappear() {
-    for(const dot of dots){
+    for (const dot of dots) {
         objectDisappear(dot);
     }
 }
 
 // function to appear the input dots
 function inputDotVisible() {
-    for(const dot of dots){
+    for (const dot of dots) {
         objectAppear(dot);
     }
 }
 // function to disappear the output text
 function outputDisappear() {
-    for(const text of textOutput){
+    for (const text of textOutput) {
         objectDisappear(text);
     }
 }
 // function to appear the output text
 function outputVisible() {
-    for(const text of textOutput){
+    for (const text of textOutput) {
         objectAppear(text);
     }
 }
 // function to diappear the input text
 function inputTextDisappear() {
-    for(const text of textInput){
+    for (const text of textInput) {
         objectDisappear(text);
     }
 }
@@ -133,55 +133,55 @@ function allDisappear() {
     inputDotDisappear();
     outputDisappear();
     inputTextDisappear();
-    for(const object of objects){
-        fillColor(object,"#008000");
+    for (const object of objects) {
+        fillColor(object, "#008000");
     }
 }
 
 function appendInput1() {
     if (textInput[0].textContent !== "0" && timeline.progress() === 0) {
-        changeto0(16,24,0,0);
+        changeto0(16, 24, 0, 0);
     }
     else if (textInput[0].textContent !== "1" && timeline.progress() === 0) {
-        changeto1(16,24,0,0);
+        changeto1(16, 24, 0, 0);
     }
-    setter(textInput[0].textContent,dots[0]);
+    setter(textInput[0].textContent, dots[0]);
 }
 function appendSelect() {
     if (textInput[1].textContent !== "0" && timeline.progress() === 0) {
-        changeto0(16,394,1,1);
+        changeto0(16, 394, 1, 1);
     }
     else if (textInput[1].textContent !== "1" && timeline.progress() === 0) {
-        changeto1(16,394,1,1);
+        changeto1(16, 394, 1, 1);
     }
-    for(let i=1;i<3;i++){
-        setter(textInput[1].textContent,dots[i]);
+    for (let i = 1; i < 3; i++) {
+        setter(textInput[1].textContent, dots[i]);
     }
 }
 function appendInput0() {
     if (textInput[2].textContent !== "0" && timeline.progress() === 0) {
-        changeto0(16,764,2,2);
+        changeto0(16, 764, 2, 2);
     }
     else if (textInput[2].textContent !== "1" && timeline.progress() === 0) {
-        changeto1(16,764,2,2);
+        changeto1(16, 764, 2, 2);
     }
-    setter(textInput[2].textContent,dots[3]);
+    setter(textInput[2].textContent, dots[3]);
 }
 
-function changeto1(coordinateX,coordinateY,object,textObject) {
+function changeto1(coordinateX, coordinateY, object, textObject) {
     textInput[textObject].textContent = 1;
     svg.appendChild(textInput[textObject]);
-    setCoordinates(coordinateX,coordinateY,textInput[textObject]);
-    fillColor(objects[object],"#29e");
+    setCoordinates(coordinateX, coordinateY, textInput[textObject]);
+    fillColor(objects[object], "#29e");
     clearObservation();
     objectAppear(textInput[textObject]);
 }
 
-function changeto0(coordinateX,coordinateY,object,textObject) {
+function changeto0(coordinateX, coordinateY, object, textObject) {
     textInput[textObject].textContent = 0;
     svg.appendChild(textInput[textObject]);
-    setCoordinates(coordinateX,coordinateY,textInput[textObject]);
-    fillColor(objects[object],"#eeeb22");
+    setCoordinates(coordinateX, coordinateY, textInput[textObject]);
+    fillColor(objects[object], "#eeeb22");
     clearObservation();
     objectAppear(textInput[textObject]);
 }
@@ -192,36 +192,36 @@ let and = "0";
 
 function stage1() {
     not = textInput[1].textContent === "1" ? "0" : "1";
-    setter(not,dots[1]); 
+    setter(not, dots[1]);
 }
 function stage2() {
-    or1 = calculateOr(textInput[0].textContent,not);
-    or2 = calculateOr(textInput[2].textContent,textInput[1].textContent);
-    setter(or1,dots[0]);
-    setter(or2,dots[3]);
-    objectDisappear(dots[1]); 
+    or1 = calculateOr(textInput[0].textContent, not);
+    or2 = calculateOr(textInput[2].textContent, textInput[1].textContent);
+    setter(or1, dots[0]);
+    setter(or2, dots[3]);
+    objectDisappear(dots[1]);
     objectDisappear(dots[2]);
 }
 function stage3() {
-    and = calculateAnd(or1,or2);
-    setter(and,dots[0]);
+    and = calculateAnd(or1, or2);
+    setter(and, dots[0]);
     objectDisappear(dots[3]);
 }
 
 
 
-function outputSetter(){
+function outputSetter() {
     inputDotDisappear();
     textOutput[0].textContent = and;
-    setter(textOutput[0].textContent,objects[3]);
+    setter(textOutput[0].textContent, objects[3]);
 }
 
 function display() {
-    observ.innerHTML = "Simulation has finished. Press Restart to start again"
+    observ.innerHTML = " Simulation has finished. Please click on Reset and repeat the instructions given to start again.";
 }
 
 function reboot() {
-    for(const text of textInput){
+    for (const text of textInput) {
         text.textContent = 2;
     }
 }
@@ -268,7 +268,7 @@ function simulationStatus() {
 function stopCircuit() {
     if (timeline.time() !== 0 && timeline.progress() !== 1) {
         timeline.pause();
-        observ.innerHTML = "Simulation has been stopped.";
+        observ.innerHTML = "Simulation has been Paused. Please click on the 'Start' button to Resume.";
         decide = false;
         status.innerHTML = "Start";
         speed.selectedIndex = 0;
@@ -278,7 +278,7 @@ function stopCircuit() {
     }
 }
 function startCircuit() {
-    for(const text of textInput){
+    for (const text of textInput) {
         if (text.textContent === "2") {
             observ.innerHTML = "Please set the input values";
             return;
@@ -313,11 +313,11 @@ inputDots();
 outputDisappear();
 
 timeline.add(inputDotVisible, 0);
-timeline.add(stage1,10);
-timeline.add(stage2,12.5);
-timeline.add(stage3,20);
-timeline.add(outputSetter,25);
-timeline.add(outputVisible,25);
+timeline.add(stage1, 10);
+timeline.add(stage2, 12.5);
+timeline.add(stage3, 20);
+timeline.add(outputSetter, 25);
+timeline.add(outputVisible, 25);
 timeline.eventCallback("onComplete", outputVisible);
 timeline.eventCallback("onComplete", display);
 

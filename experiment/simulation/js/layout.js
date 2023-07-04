@@ -1,4 +1,4 @@
-import { simulateMux, deleteMux } from "./multiplexer.js"
+import { simulateMux, deleteMux } from "./multiplexer.js";
 import { simulate, deleteElement } from "./gate.js";
 import * as main from "./main.js";
 
@@ -74,7 +74,7 @@ function changeTabs(e) {
     main.connectGate();
     main.refreshWorkingArea();
     main.initTwoBitMultiplexer();
-    window.simulate = simulate
+    window.simulate = simulate;
   }
   else if (task === "task2") {
     main.unbindEvent();
@@ -96,24 +96,24 @@ window.changeTabs = changeTabs;
 const updateInstructions = () => {
   const task = window.currentTab;
   const instructionBox = document.getElementById("instruction-title");
-  let title = ""; 
+  let title = "";
   if (task === "task1") {
     title = `Instructions<br>Implement a 2 x 1 Multiplexer using logic gates`;
   } else if (task === "task2") {
     title = `Instructions<br>Implement a 4 x 1 Multiplexer using 2 x 1 Multiplexers`;
   }
   instructionBox.innerHTML = title;
-}
+};
 
 
 // Toolbar
 function updateToolbar() {
   let elem = "";
   if (window.currentTab === "task1") {
-    elem = '<div class="component-button and" onclick="addGate(event)">AND</div><div class="component-button or" onclick="addGate(event)">OR</div><div class="component-button not" onclick="addGate(event)">NOT</div><div class="component-button nand" onclick="addGate(event)">NAND</div><div class="component-button nor" onclick="addGate(event)">NOR</div><div class="component-button xor" onclick="addGate(event)">XOR</div><div class="component-button xnor" onclick="addGate(event)">XNOR</div>'
+    elem = '<div class="component-button and" onclick="addGate(event)">AND</div><div class="component-button or" onclick="addGate(event)">OR</div><div class="component-button not" onclick="addGate(event)">NOT</div><div class="component-button nand" onclick="addGate(event)">NAND</div><div class="component-button nor" onclick="addGate(event)">NOR</div><div class="component-button xor" onclick="addGate(event)">XOR</div><div class="component-button xnor" onclick="addGate(event)">XNOR</div>';
   }
   else if (window.currentTab === "task2") {
-    elem = '<div class="component-button multiplexer" onclick="addMux(event)"></div>'
+    elem = '<div class="component-button multiplexer" onclick="addMux(event)"></div>';
   }
 
   document.getElementById("toolbar").innerHTML = elem;
@@ -123,16 +123,7 @@ function updateToolbar() {
 function clearObservations() {
 
   document.getElementById("table-body").innerHTML = "";
-  let head = ''
-
-  if (window.currentTab === "task1") {
-    head = '<tr><th colspan="3">Inputs</th><th colspan="1">Expected Values</th><th colspan="1">Observed Values</th></tr><tr><th>A</th><th>B</th><th>Select</th><th>Output</th><th>Output</th></tr>'
-  }
-  else if (window.currentTab === "task2") {
-    head = '<tr><th colspan="2">Select</th><th colspan="2">Output</th></tr><tr><th>S0</th><th>S1</th><th>Expected</th><th>Observed</th>'
-  }
-
-  document.getElementById("table-head").innerHTML = head;
+  document.getElementById("table-head").innerHTML = "";
   document.getElementById('result').innerHTML = "";
 
 }

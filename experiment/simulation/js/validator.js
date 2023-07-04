@@ -30,7 +30,9 @@ export function twoBitMultiplexerTest(inputA, inputB, select, outputId)  // This
     let input1 = gates_list[inputB];
     let selectLine = gates_list[select];
     let circuitIsCorrect = true;
-    let dataTable = ''
+    let dataTable = "";
+    let head = '<tr><th colspan="3">Inputs</th><th colspan="1">Expected Values</th><th colspan="1">Observed Values</th></tr><tr><th>A</th><th>B</th><th>Select</th><th>Output</th><th>Output</th></tr>';
+    document.getElementById("table-head").innerHTML = head;
 
     for (let i = 0; i < 8; i++) {
         // covert i to binary
@@ -46,7 +48,7 @@ export function twoBitMultiplexerTest(inputA, inputB, select, outputId)  // This
         const calculatedOutput = computeOr(computeAnd(input0.output, !selectLine.output), computeAnd(input1.output, selectLine.output)) ? 1 : 0;
 
         // simulate the circuit
-        if(!testSimulation(gates_list)){
+        if (!testSimulation(gates_list)) {
             return;
         }
         const output = gates_list[outputId].output ? 1 : 0;
@@ -55,7 +57,7 @@ export function twoBitMultiplexerTest(inputA, inputB, select, outputId)  // This
         if (calculatedOutput != output) {
             circuitIsCorrect = false;
         }
-        dataTable += `<tr class="bold-table"><th> ${binary[2]} </th><th> ${binary[1]}</th><th> ${binary[0]}</th><td> ${calculatedOutput}</td><td class="${className}"> ${output}</td></tr>`
+        dataTable += `<tr class="bold-table"><th> ${binary[2]} </th><th> ${binary[1]}</th><th> ${binary[0]}</th><td> ${calculatedOutput}</td><td class="${className}"> ${output}</td></tr>`;
     }
 
     const table_elem = document.getElementById('table-body');
@@ -85,14 +87,21 @@ export function fourBitMultiplexerTest(i0, i1, i2, i3, s1, s0, OutputFinal) // I
     let inputI3 = gates_list[i3];
     let inputS0 = gates_list[s0];
     let inputS1 = gates_list[s1];
-    let dataTable = ''
+    let dataTable = '';
+    let head = '<tr><th colspan="2">Select</th><th colspan="2">Output</th></tr><tr><th>S0</th><th>S1</th><th>Expected</th><th>Observed</th>';
+    document.getElementById("table-head").innerHTML = head;
     let circuitIsCorrect = true;
 
 
-    let cnt1 = 0;
-    let cnt2 = 0;
-    let cnt3 = 0;
-    let cnt4 = 0;
+    let cnt00 = true; // this value will become false if for any combination of A0,B0, the S1,S0=00combination will give wrong output.
+    let cnt01 = true;
+    let cnt10 = true;
+    let cnt11 = true;
+
+    let outputName00 = ""; //this stores the outputName that we get for all combo's of A0 & B0 when S1,S0 = 00
+    let outputName01 = "";
+    let outputName10 = "";
+    let outputName11 = "";
     for (let i = 0; i < 64; i++) // 64 = 2^6 basically calculates all the possible combinations for 6 inputs
     {
         // covert i to binary
@@ -113,35 +122,50 @@ export function fourBitMultiplexerTest(i0, i1, i2, i3, s1, s0, OutputFinal) // I
 
         // simulate the circuit
         const output = testSimulationMux(mux, gates_list);
-        if(output == false)
-        {
+        if (output == false) {
             return;
         }
         let outputName = output;
         const muxOut = gates_list[OutputFinal].output;
 
-        let className = calculatedOutput === muxOut ? "success-table" : "failure-table";
+        // let className = calculatedOutput === muxOut ? "success-table" : "failure-table";
         if (muxOut != calculatedOutput) {
             circuitIsCorrect = false;
         }
 
-        if (binary[1] === "0" && binary[0] === "0" && cnt1 === 0) {
-            dataTable += `<tr class="bold-table"><th>${binary[1]}</th><th>${binary[0]}</th><th> I0 </th><td class="${className}">${outputName}</td></tr>`
-            cnt1++;
+        if (binary[1] === "0" && binary[0] === "0") {
+
+            if (muxOut != calculatedOutput)
+                cnt00 = false;
+            outputName00 = outputName;
         }
-        else if (binary[1] === "1" && binary[0] === "0" && cnt2 === 0) {
-            dataTable += `<tr class="bold-table"><th>${binary[1]}</th><th>${binary[0]}</th><th> I1 </th><td class="${className}">${outputName}</td></tr>`
-            cnt2++;
+        else if (binary[1] === "1" && binary[0] === "0") {
+            if (muxOut != calculatedOutput)
+                cnt10 = false;
+            outputName10 = outputName;
         }
-        else if (binary[1] === "1" && binary[0] === "1" && cnt3 === 0) {
-            dataTable += `<tr class="bold-table"><th>${binary[1]}</th><th>${binary[0]}</th><th> I3 </th><td class="${className}">${outputName}</td></tr>`
-            cnt3++;
+        else if (binary[1] === "1" && binary[0] === "1") {
+            if (muxOut != calculatedOutput)
+                cnt11 = false;
+            outputName11 = outputName;
         }
-        else if (binary[1] === "0" && binary[0] === "1" && cnt4 === 0) {
-            dataTable += `<tr class="bold-table"><th>${binary[1]}</th><th>${binary[0]}</th><th> I2 </th><td class="${className}">${outputName}</td></tr>`
-            cnt4++;
+        else if (binary[1] === "0" && binary[0] === "1") {
+            if (muxOut != calculatedOutput)
+                cnt01 = false;
+            outputName01 = outputName;
         }
     }
+
+    let className = "";
+
+    className = cnt00 === true ? "success-table" : "failure-table";
+    dataTable += `<tr class="bold-table"><th>0</th><th>0</th><th> I0 </th><td class="${className}">${outputName00}</td></tr>`;
+    className = cnt10 === true ? "success-table" : "failure-table";
+    dataTable += `<tr class="bold-table"><th>1</th><th>0</th><th> I1 </th><td class="${className}">${outputName10}</td></tr>`;
+    className = cnt11 === true ? "success-table" : "failure-table";
+    dataTable += `<tr class="bold-table"><th>1</th><th>1</th><th> I3 </th><td class="${className}">${outputName11}</td></tr>`;
+    className = cnt01 === true ? "success-table" : "failure-table";
+    dataTable += `<tr class="bold-table"><th>0</th><th>1</th><th> I2 </th><td class="${className}">${outputName01}</td></tr>`;
 
     const table_elem = document.getElementById('table-body');
     table_elem.insertAdjacentHTML('beforeend', dataTable);

@@ -2,14 +2,14 @@
     "version": 2.0,
     "questions": [
         {
-            "question": "1. if Input1 = 1 and input2 =0 , and select=1, what is the output of a 2*1 MUX",
+            "question": "1. If input1 (I0) = 1 and input2 (I1) = 0, and select = 1, what is the output of a 2x1 MUX?",
             "answers": {
                 "a": "1",
                 "b": "0",
                 "c": "Output is degenerated",
                 "d": "Information insufficient"
             },
-            "correctAnswer": "a",
+            "correctAnswer": "b",
             "explanations": {},
             "difficulty": "beginner"
         },
@@ -28,7 +28,7 @@
             "difficulty": "intermediate"
         },
         {
-            "question": "3. why is n*1 AND gate required in a multiplexer n*1 MUX",
+            "question": "3. Why is an nx1 AND gate required in an nx1 MUX ?",
             "answers": {
                 "a": "To convert n inputs in a single output",
                 "b": "To make sure that each input has the same value",
@@ -44,7 +44,7 @@
         {
             "question": "4.How many 2*1 AND gates are required to create a 16*1 AND gate ",
             "answers": {
-                "a": "4",
+                "a": "15",
                 "b": "2",
                 "c": "8",
                 "d": "1"

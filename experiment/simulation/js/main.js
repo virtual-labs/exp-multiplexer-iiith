@@ -1,11 +1,11 @@
 import * as gatejs from "./gate.js";
 import * as multiplexerjs from "./multiplexer.js";
-import {wireColours} from "./layout.js"
+import { wireColours } from "./layout.js";
 
 'use strict';
 let num_wires = 0;
 
-document.getScroll = function () {
+document.getScroll = function() {
     if (window.pageYOffset != undefined) {
         return [pageXOffset, pageYOffset];
     } else {
@@ -16,7 +16,7 @@ document.getScroll = function () {
         sy = r.scrollTop || b.scrollTop || 0;
         return [sx, sy];
     }
-}
+};
 const workingArea = document.getElementById("working-area");
 export const jsPlumbInstance = jsPlumbBrowserUI.newInstance({
     container: workingArea,
@@ -34,15 +34,15 @@ export const jsPlumbInstance = jsPlumbBrowserUI.newInstance({
     connectionsDetachable: false,
 });
 
-export const connectGate = function () {
-    jsPlumbInstance.bind("beforeDrop", function (data) {
+export const connectGate = function() {
+    jsPlumbInstance.bind("beforeDrop", function(data) {
         let fromEndpoint = data.connection.endpoints[0];
         let toEndpoint = data.dropEndpoint;
 
         const start_uuid = fromEndpoint.uuid.split(":")[0];
         const end_uuid = toEndpoint.uuid.split(":")[0];
-        
-        if(fromEndpoint.elementId === toEndpoint.elementId) {
+
+        if (fromEndpoint.elementId === toEndpoint.elementId) {
             return false;
         }
 
@@ -50,26 +50,31 @@ export const connectGate = function () {
             return false;
         } else if (start_uuid === "output" && end_uuid === "output") {
             return false;
+        } else if ((end_uuid === "input" && toEndpoint.connections.length > 0) || (start_uuid === "input" && fromEndpoint.connections.length > 1)) {
+            // If it already has a connection, do not establish a new connection
+            return false;
         } else {
-            jsPlumbInstance.connect({ uuids: [fromEndpoint.uuid, toEndpoint.uuid], paintStyle:{ stroke: wireColours[num_wires], strokeWidth:4 }});
+            jsPlumbInstance.connect({ uuids: [fromEndpoint.uuid, toEndpoint.uuid], paintStyle: { stroke: wireColours[num_wires], strokeWidth: 4 } });
             num_wires++;
             num_wires = num_wires % wireColours.length;
             if (start_uuid === "output") {
                 let input = gatejs.gates[fromEndpoint.elementId];
                 input.isConnected = true;
                 gatejs.gates[toEndpoint.elementId].addInput(input);
+                input.addOutput(gatejs.gates[toEndpoint.elementId]);
             } else if (end_uuid === "output") {
                 let input = gatejs.gates[toEndpoint.elementId];
                 input.isConnected = true;
                 gatejs.gates[fromEndpoint.elementId].addInput(input);
+                input.addOutput(gatejs.gates[fromEndpoint.elementId]);
             }
 
         }
     });
-}
+};
 
-export const connectMultiplexer = function () {
-    jsPlumbInstance.bind("beforeDrop", function (data) {
+export const connectMultiplexer = function() {
+    jsPlumbInstance.bind("beforeDrop", function(data) {
         let fromEndpoint = data.connection.endpoints[0];
         let toEndpoint = data.dropEndpoint;
 
@@ -80,8 +85,11 @@ export const connectMultiplexer = function () {
             return false;
         } else if (start_uuid === "output" && end_uuid === "output") {
             return false;
+        } else if ((end_uuid === "input" && toEndpoint.connections.length > 0) || (start_uuid === "input" && fromEndpoint.connections.length > 1)) {
+            // If it already has a connection, do not establish a new connection
+            return false;
         } else {
-            jsPlumbInstance.connect({ uuids: [fromEndpoint.uuid, toEndpoint.uuid], paintStyle:{ stroke: wireColours[num_wires], strokeWidth:4 }});
+            jsPlumbInstance.connect({ uuids: [fromEndpoint.uuid, toEndpoint.uuid], paintStyle: { stroke: wireColours[num_wires], strokeWidth: 4 } });
             num_wires++;
             num_wires = num_wires % wireColours.length;
             const start_type = fromEndpoint.elementId.split("-")[0];
@@ -93,7 +101,7 @@ export const connectMultiplexer = function () {
                     if (Object.keys(fromEndpoint.overlays)[0].includes("finalOutput")) {
                         pos = "Out";
                     }
-                 
+
                     input.setConnected(true);
                     if (Object.keys(toEndpoint.overlays)[0].includes("a")) {
                         multiplexerjs.multiplexer[toEndpoint.elementId].setA0([input, pos]);
@@ -104,7 +112,8 @@ export const connectMultiplexer = function () {
                     else if (Object.keys(toEndpoint.overlays)[0].includes("s0")) {
                         multiplexerjs.multiplexer[toEndpoint.elementId].setSelectLine([input, pos]);
                     }
-                   
+                    input.addOutput(multiplexerjs.multiplexer[toEndpoint.elementId]);
+
                 } else if (end_uuid === "output") {
                     let input = multiplexerjs.multiplexer[toEndpoint.elementId];
                     let pos = "";
@@ -121,6 +130,7 @@ export const connectMultiplexer = function () {
                     else if (Object.keys(fromEndpoint.overlays)[0].includes("s0")) {
                         multiplexerjs.multiplexer[fromEndpoint.elementId].setSelectLine([input, pos]);
                     }
+                    input.addOutput(multiplexerjs.multiplexer[fromEndpoint.elementId]);
                 }
             }
             else if (start_type === "Multiplexer" && end_type === "Input") {
@@ -137,7 +147,8 @@ export const connectMultiplexer = function () {
                     else if (Object.keys(fromEndpoint.overlays)[0].includes("s0")) {
                         multiplexerjs.multiplexer[fromEndpoint.elementId].setSelectLine([input, pos]);
                     }
-                  
+                    input.addOutput(multiplexerjs.multiplexer[fromEndpoint.elementId]);
+
                 }
             }
             else if (start_type === "Input" && end_type === "Multiplexer") {
@@ -154,32 +165,35 @@ export const connectMultiplexer = function () {
                     else if (Object.keys(toEndpoint.overlays)[0].includes("s0")) {
                         multiplexerjs.multiplexer[toEndpoint.elementId].setSelectLine([input, pos]);
                     }
+                    input.addOutput(multiplexerjs.multiplexer[toEndpoint.elementId]);
                 }
             }
             else if (start_type === "Multiplexer" && end_type === "Output") {
                 if (start_uuid === "output") {
                     let input = multiplexerjs.multiplexer[fromEndpoint.elementId];
                     let output = gatejs.gates[toEndpoint.elementId];
-                    let pos=""
+                    let pos = "";
                     if (Object.keys(fromEndpoint.overlays)[0].includes("finalOutput")) {
                         pos = "Out";
                     }
                     input.setConnected(true);
                     output.addInput(input);
                     multiplexerjs.finalOutputs[toEndpoint.elementId] = [input, pos];
+                    input.addOutput(output);
                 }
             }
             else if (start_type === "Output" && end_type === "Multiplexer") {
                 if (start_uuid === "input") {
                     let input = multiplexerjs.multiplexer[toEndpoint.elementId];
                     let output = gatejs.gates[fromEndpoint.elementId];
-                    let pos=""
+                    let pos = "";
                     if (Object.keys(fromEndpoint.overlays)[0].includes("finalOutput")) {
                         pos = "Out";
                     }
                     input.setConnected(true);
                     output.addInput(input);
                     multiplexerjs.finalOutputs[fromEndpoint.elementId] = [input, pos];
+                    input.addOutput(output);
                 }
             }
             else if (start_type === "Input" && end_type === "Output") {
@@ -188,6 +202,7 @@ export const connectMultiplexer = function () {
                     let output = gatejs.gates[toEndpoint.elementId];
                     input.setConnected(true);
                     output.addInput(input);
+                    input.addOutput(output);
                 }
             }
             else if (start_type === "Output" && end_type === "Input") {
@@ -196,15 +211,16 @@ export const connectMultiplexer = function () {
                     let output = gatejs.gates[fromEndpoint.elementId];
                     input.setConnected(true);
                     output.addInput(input);
+                    input.addOutput(output);
                 }
             }
         }
     });
-}
+};
 
 export const unbindEvent = () => {
     jsPlumbInstance.unbind("beforeDrop");
-}
+};
 
 
 export function registerGate(id, gate) {
@@ -406,7 +422,7 @@ export function registerGate(id, gate) {
                 ],
             })
         );
-        
+
     }
 }
 
@@ -427,21 +443,21 @@ export function initTwoBitMultiplexer() {
         const component = gate.generateComponent();
         const parent = document.getElementById("working-area");
         parent.insertAdjacentHTML('beforeend', component);
-        gate.registerComponent("working-area",positions[i].x, positions[i].y);;
+        gate.registerComponent("working-area", positions[i].x, positions[i].y);;
     }
 }
 
 
 
 export function initFourBitMultiplexer() {
-    const ids = ["Input-0", "Input-1", "Input-2", "Input-3", "Input-4", "Input-5","Output-8"] // [A0,B0,A1,B1,S0,S1,Output0,Output1,FinalOutput]
-    const types = ["Input", "Input", "Input", "Input", "Input", "Input", "Output"]
-    const names = ["I0", "I1","I2", "I3", "S1","S0","FinalOutput"]
+    const ids = ["Input-0", "Input-1", "Input-2", "Input-3", "Input-4", "Input-5", "Output-8"]; // [A0,B0,A1,B1,S0,S1,Output0,Output1,FinalOutput]
+    const types = ["Input", "Input", "Input", "Input", "Input", "Input", "Output"];
+    const names = ["I0", "I1", "I2", "I3", "S1", "S0", "FinalOutput"];
     const positions = [
-        { x: 300, y: 50 }, 
-        { x: 400, y: 50 }, 
-        { x: 640, y: 50 }, 
-        { x: 740, y: 50 }, 
+        { x: 300, y: 50 },
+        { x: 400, y: 50 },
+        { x: 640, y: 50 },
+        { x: 740, y: 50 },
         { x: 100, y: 400 },
         { x: 100, y: 200 },
         { x: 500, y: 700 }
@@ -453,7 +469,7 @@ export function initFourBitMultiplexer() {
         const component = gate.generateComponent();
         const parent = document.getElementById("working-area");
         parent.insertAdjacentHTML('beforeend', component);
-        gate.registerComponent("working-area",positions[i].x, positions[i].y);
+        gate.registerComponent("working-area", positions[i].x, positions[i].y);
     }
 }
 
