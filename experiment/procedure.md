@@ -20,7 +20,7 @@
 * When Select is 0 the output is the value of A and when Select is 1 the output is the value of B.
 * If the circuit has been made as described as above, then upon clicking the "Submit" button a "Success" message will be displayed.
 
-# 4-bit Multiplexer
+<!-- # 4-bit Multiplexer
 
 ## Components Required - 
 
@@ -39,4 +39,4 @@
 
 * When S1 is 0 the output of the first 2-bit Multiplexer is the output and when S1 is 1 the output of the second 2-bit Multiplexer is the output.
 * If the circuit has been made as described as above, then upon clicking the "Submit" button a "Success" message will be displayed.
-
+ -->
