@@ -87,14 +87,14 @@
                             <path class="gate-demo" d="M 380 180 L 380 150 L 420 180 L 380 210 L 380 180 " />
                             <circle fill="#29e" cx="430" cy="180" r="10" stroke="black" stroke-width="3" fill="none" />
                         </g>
+                        <g id="or">
+                            <path class="gate-demo" d="M 695 340 Q 895 390 695 440 Q 745 390 695 340" />
+                        </g>
                         <g id="and">
-                            <path class="gate-demo" d="M 720 340 L 720 440 L 770 440 Q 820 390 770 340 L 720 340" />
+                            <path class="gate-demo" d="M 480 115 L 480 215 L 530 215 Q 580 165 530 115 L 480 115 " />
                         </g>
-                        <g id="or1">
-                            <path class="gate-demo" d="M 480 115 Q 680 165 480 215 Q 530 165 480 115" />
-                        </g>
-                        <g id="or2">
-                            <path class="gate-demo" d="M 480 565 Q 680 615 480 665 Q 530 615 480 565" />
+                        <g id="and">
+                            <path class="gate-demo" d="M 480 565 L 480 665 L 530 665 Q 580 615 530 565 L 480 565  " />
                         </g>
                         <circle id="input1" cx="20" cy="20" r="15" onclick="appendInput1()"
                             style="fill:green;stroke:rgb(68, 68, 119);stroke-width:3;fill-opacity:1;stroke-opacity:1" />
@@ -109,9 +109,9 @@
                         <text class="text-demo" x="04" y="737">INPUT 0</text>
                         <text class="text-demo" x="857" y="370">OUTPUT</text>
                         <text class="text-demo" x="380" y="184">NOT</text>
-                        <text class="text-demo" x="530" y="168">OR</text>
-                        <text class="text-demo" x="530" y="618">OR</text>
-                        <text class="text-demo" x="740" y="394">AND</text>
+                        <text class="text-demo" x="500" y="168">AND</text>
+                        <text class="text-demo" x="500" y="618">AND</text>
+                        <text class="text-demo" x="740" y="394">OR</text>
                     </svg>
                 </div>
             </div>
@@ -127,6 +127,6 @@
     </div>
     <script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
     <script type="module" src="js/animation.js"></script>
-</body>
+<script src="..\assets\js\iframeResize.js"></script></body>
 
 </html>

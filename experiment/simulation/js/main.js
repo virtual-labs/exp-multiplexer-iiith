@@ -6,8 +6,8 @@ import { wireColours } from "./layout.js";
 let num_wires = 0;
 
 document.getScroll = function() {
-    if (window.pageYOffset != undefined) {
-        return [pageXOffset, pageYOffset];
+    if (window.scrollX != undefined) {
+        return [scrollX, scrollY];
     } else {
         let sx, sy, d = document,
             r = d.documentElement,
@@ -23,7 +23,7 @@ export const jsPlumbInstance = jsPlumbBrowserUI.newInstance({
     maxConnections: -1,
     endpoint: {
         type: "Dot",
-        options: { radius: 7 },
+        options: { radius: 5 },
     },
     dragOptions: {
         containment: "parentEnclosed",
@@ -489,7 +489,16 @@ export function refreshWorkingArea() {
 
 // window.getInfo = getInfo
 
+refresh.addEventListener("click",function(event){
+    jsPlumbInstance.reset();
+    window.numComponents = 0;
 
+    gatejs.clearGates();
+    multiplexerjs.clearMux();
+    if(window.currentTab=="task1") initTwoBitMultiplexer();
+    else initFourBitMultiplexer();
+
+})
 
 window.currentTab = "task1";
 connectGate();
