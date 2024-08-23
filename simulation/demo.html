@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/css/style.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/MotionPathPlugin.min.js"></script>
+    <title>
+        Multiplexer: Demo
+    </title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-one-quarter v-instruction-title">
+                Tasks
+            </div>
+            <div class="column">
+                <div class="v-tabs">
+                    <ul>
+                        <li class="is-active" id="task1">
+                            <a>
+                                2 x 1 Multiplexer
+                            </a>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="columns is-centered">
+            <div class="column">
+                <div class="v-collapsible-instruction-container v-instruction-container">
+                    <div class="v-collapsible is-size-5">Instructions</div>
+                    <div class="v-content" style="text-align: left; padding-left: 10%; padding-right: 10%;">
+                        <ul style="list-style: disc;">
+                            <li><b>Start</b>- Starts the simulation after the inputs are properly selected. Default
+                                speed is 1x.</li>
+                            <li>Select the speed through dropdown menu</li>
+                            <li>The default speed is reset to x1 automatically at the beginning of every simulation or
+                                whenever you pause and resume. If you want to change the speed, you can do so only while
+                                the simulation is running (only after starting or after resuming the simulation).</li>
+                            <li><b>Reset</b> - Resets the simulation</li>
+                            <li>Click on the green input bits to set their values.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="columns is-centered">
+        <div class="column">
+            <select class="speed-box" autocomplete="off" name="speed" onchange="setSpeed(this.value)" id="speed">
+                <option value="1" selected="selected">1x</option>
+                <option value="2">2x</option>
+                <option value="4">4x</option>
+            </select>
+            <button class="v-button" id="play-or-pause" onclick="simulationStatus()">Start</button>
+            <button class="v-button" id="restart" onclick="restartCircuit()">Reset</button>
+        </div>
+    </div>
+    <div class="columns is-centered is-flex is-flex-direction-row is-flex-wrap-wrap is-align-content-start">
+        <div class="column is-9-desktop is-12-tablet is-12-mobile">
+            <div id="circuit-board">
+                <div id="working-area">
+
+                    <svg class="svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="120%"
+                        viewBox="0 0 1025 1000 ">
+                        <path id="path1" class="wire-demo"
+                            d="M 20 20 L 300 20 L 400 20 L 400 150 L 500 150 L 520 150  L 520 165 L 700 165 L 700 380L 720 380 L 720 390" />
+                        <path id="path3" class="wire-demo"
+                            d="M 20 390 L 200 390 L 200 180 L 300 180 L 320 180 L 400 180 L 500 180 L 520 180  L 520 165 " />
+
+                        <path id="path4" class="wire-demo"
+                            d="M 20 390 L 200 390 L 200 600 L 300 600 L 320 600 L 500 600 L 520 600  L 520 615" />
+                        <path id="path2" class="wire-demo"
+                            d="M 20 760 L 300 760 L 400 760 L 400 630 L 500 630 L 520 630  L 520 615 L 700 615 L 700 400L 720 400 L 720 390" />
+
+                        <path id="path5" class="wire-demo" d="M 720 390 L 880 390" />
+                        <g id="not">
+                            <path class="gate-demo" d="M 380 180 L 380 150 L 420 180 L 380 210 L 380 180 " />
+                            <circle fill="#29e" cx="430" cy="180" r="10" stroke="black" stroke-width="3" fill="none" />
+                        </g>
+                        <g id="or">
+                            <path class="gate-demo" d="M 695 340 Q 895 390 695 440 Q 745 390 695 340" />
+                        </g>
+                        <g id="and">
+                            <path class="gate-demo" d="M 480 115 L 480 215 L 530 215 Q 580 165 530 115 L 480 115 " />
+                        </g>
+                        <g id="and">
+                            <path class="gate-demo" d="M 480 565 L 480 665 L 530 665 Q 580 615 530 565 L 480 565  " />
+                        </g>
+                        <circle id="input1" cx="20" cy="20" r="15" onclick="appendInput1()"
+                            style="fill:green;stroke:rgb(68, 68, 119);stroke-width:3;fill-opacity:1;stroke-opacity:1" />
+                        <circle id="select" cx="20" cy="390" r="15" onclick="appendSelect()"
+                            style="fill:green;stroke:rgb(68, 68, 119);stroke-width:3;fill-opacity:1;stroke-opacity:1" />
+                        <circle id="input0" cx="20" cy="760" r="15" onclick="appendInput0()"
+                            style="fill:green;stroke:rgb(68, 68, 119);stroke-width:3;fill-opacity:1;stroke-opacity:1" />
+                        <circle id="output" cx="880" cy="390" r="15"
+                            style="fill:green;stroke:rgb(68, 68, 119);stroke-width:3;fill-opacity:1;stroke-opacity:1" />
+                        <text class="text-demo" x="04" y="55">INPUT 1</text>
+                        <text class="text-demo" x="04" y="370">SELECT</text>
+                        <text class="text-demo" x="04" y="737">INPUT 0</text>
+                        <text class="text-demo" x="857" y="370">OUTPUT</text>
+                        <text class="text-demo" x="380" y="184">NOT</text>
+                        <text class="text-demo" x="500" y="168">AND</text>
+                        <text class="text-demo" x="500" y="618">AND</text>
+                        <text class="text-demo" x="740" y="394">OR</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="column is-3-desktop is-4-tablet is-12-mobile">
+            <div class="v-datalist-container components-list">
+                <div class="v-datalist-title">Observations</div>
+                <div class="v-datalist-row">
+                    <div id="observations"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
+    <script type="module" src="js/animation.js"></script>
+<script src="..\assets\js\iframeResize.js"></script><script src="../assets/js/iframeResize.js"></script></body>
+
+</html>
