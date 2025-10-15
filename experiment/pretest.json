@@ -1,77 +1,90 @@
 {
-    "version": 2.0,
-    "questions": [
-        {
-            "question": "1. What is an application of multiplexers ?",
-            "answers": {
-                "a": "ALU",
-                "b": "Computer Memory",
-                "c": "Communication System",
-                "d": "All of these"
-            },
-            "correctAnswer": "d",
-            "explanations": {
-                
-            },
-            "difficulty": "beginner"
-        },
-        {
-            "question": "2. What is/are the logic gates used in Multiplexers ?",
-            "answers": {
-                "a": "NOT",
-                "b": "AND",
-                "c": "OR",
-                "d": "All of these"
-            },
-            "correctAnswer": "d",
-            "explanations": {
-                
-            },
-            "difficulty": "beginner"
-        },
-        {
-            "question": "3. Multiplexer is what kind of a circuit ?",
-            "answers": {
-                "a": "Sequential circuit",
-                "b": "Combinational circuit",
-                "c": "Both",
-                "d": "None of these"
-            },
-            "correctAnswer": "b",
-            "explanations": {
-               
-            },
-            "difficulty": "intermediate"
-        },
-        {
-            "question": "4. Which of the following is used as a parallel to serial converter ?",
-            "answers": {
-                "a": "Multiplier",
-                "b": "Demultiplexer",
-                "c": "Decoder",
-                "d": "All of these"
-            },
-            "correctAnswer": "a",
-            "explanations": {
-               
-            },
-            "difficulty": "intermediate"
-        },
-        {
-            "question": "5. What is the complexity of using a multiplexer to convert parallel inputs to serial ",
-            "answers": {
-                "a": "O(n<sup>2</sup>)",
-                "b": "O(n)",
-                "c": "O(log(n))",
-                "d": "O(1)"
-            },
-            "correctAnswer": "c",
-            "explanations": {
-                
-                "c": "2 power n inputs are required to generate 1 output in n*1 multiplexer"
-                
-            },
-            "difficulty": "advanced"
-        }
-    ]
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "1. What is an application of multiplexers ?",
+      "answers": {
+        "a": "ALU",
+        "b": "Computer Memory",
+        "c": "Communication System",
+        "d": "All of these"
+      },
+      "correctAnswer": "d",
+      "explanations": {
+        "d": "Correct. Multiplexers are used in ALUs for input selection, in computer memory for address decoding and data routing, and in communication systems for time-division multiplexing.",
+        "a": "Partially correct but incomplete. While multiplexers are used in ALUs, they have many other applications as well.",
+        "b": "Partially correct but incomplete. While multiplexers are used in computer memory systems, they have many other applications as well.",
+        "c": "Partially correct but incomplete. While multiplexers are used in communication systems, they have many other applications as well."
+      },
+      "difficulty": "beginner"
+    },
+    {
+      "question": "2. What is/are the logic gates used in Multiplexers ?",
+      "answers": {
+        "a": "NOT",
+        "b": "AND",
+        "c": "OR",
+        "d": "All of these"
+      },
+      "correctAnswer": "d",
+      "explanations": {
+        "d": "Correct. Multiplexers use NOT gates for inverting select lines, AND gates for input selection logic, and OR gates to combine the selected outputs.",
+        "a": "Partially correct but incomplete. NOT gates are used for inverting select signals, but multiplexers also require AND and OR gates.",
+        "b": "Partially correct but incomplete. AND gates are used for input selection, but multiplexers also require NOT and OR gates.",
+        "c": "Partially correct but incomplete. OR gates are used to combine selected inputs, but multiplexers also require NOT and AND gates."
+      },
+      "difficulty": "beginner"
+    },
+    {
+      "question": "3. Multiplexer is what kind of a circuit ?",
+      "answers": {
+        "a": "Sequential circuit",
+        "b": "Combinational circuit",
+        "c": "Both",
+        "d": "None of these"
+      },
+      "correctAnswer": "b",
+      "explanations": {
+        "b": "Correct. A multiplexer is a combinational circuit because its output depends only on the current inputs (data and select lines) with no memory or clock dependency.",
+        "a": "Incorrect. Sequential circuits depend on previous states and require memory elements like flip-flops, which multiplexers do not have.",
+        "c": "Incorrect. Multiplexers are purely combinational circuits, not sequential.",
+        "d": "Incorrect. Multiplexers are definitely combinational circuits."
+      },
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "4. Which of the following is used as a parallel to serial converter ?",
+      "answers": {
+        "a": "Multiplexer",
+        "b": "Demultiplexer",
+        "c": "Decoder",
+        "d": "All of these"
+      },
+      "correctAnswer": "a",
+      "explanations": {
+        "a": "Correct. A multiplexer can convert parallel inputs to serial output by sequentially selecting each input using a counter-driven select signal.",
+        "b": "Incorrect. A demultiplexer performs the opposite function - it converts serial input to parallel outputs.",
+        "c": "Incorrect. A decoder converts binary coded inputs to individual output lines, not parallel to serial conversion.",
+        "d": "Incorrect. Only multiplexers are specifically used for parallel to serial conversion."
+      },
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "5. For an n×1 multiplexer, where n represents the number of data inputs, what is the complexity (number of select lines required) to control the multiplexer:",
+      "answers": {
+        "a": "O(n<sup>2</sup>)",
+        "b": "O(n)",
+        "c": "O(log(n))",
+        "d": "O(1)"
+      },
+      "correctAnswer": "c",
+      "explanations": {
+        "c": "Correct. For an n×1 multiplexer where n is the number of data inputs, log₂(n) select lines are required. For example, a 4×1 multiplexer requires log₂(4) = 2 select lines.",
+        "a": "Incorrect. The number of select lines does not grow quadratically with the number of inputs.",
+        "b": "Incorrect. The number of select lines does not grow linearly with the number of inputs - this would be very inefficient.",
+        "d": "Incorrect. A constant number of select lines cannot handle varying numbers of inputs."
+      },
+      "difficulty": "advanced"
+    }
+  ]
 }

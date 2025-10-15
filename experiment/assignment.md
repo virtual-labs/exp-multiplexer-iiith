@@ -1,5 +1,7 @@
-1) Design 2:1, 4:1 and 8:1 multiplexers by referring the theory section. Save these circuits separately so that they can be imported and used for designing other things.
+1. Design the 2X1 multiplexer circuit as given in the theory section. The circuit should take 3 inputs (A, B, and Select) and produce 1 output (Z). Verify the logic equation Z = (A · S') + (B · S).
 
-2) Import two 4:1 multiplexers designed in 1st part and implement a Half adder circuit using these multiplexers. One mux will generate SUM (A ex-or B) and another mux will generate Carry (A.B). Now Implement the same using two 2:1 multiplexers. (Hint: choose any one out of A and B as the select bit for multiplexers).
+2. Construct a 4X1 multiplexer using three 2X1 multiplexers. Given four data inputs I₃I₂I₁I₀ and two select inputs S₁S₀, the circuit should output Y based on the select code. For circuit diagram, refer to the theory section.
 
-3) Import two 4:1 multiplexers designed in 1st question and design a 8:1 mux using them. You can use additional hardware to choose between the outputs of the two multiplexers. (Hint: Use 1 of the three select bits s2s1s0 as enable input for one of the 4:1 mux and its compliment for the other mux). 
+3. Design an 8X1 multiplexer using two 4X1 multiplexers and one 2X1 multiplexer. Given eight data inputs I₇I₆I₅I₄I₃I₂I₁I₀ and three select inputs S₂S₁S₀, implement the hierarchical design approach discussed in the theory section.
+
+4. Can a multiplexer be used to implement any Boolean function? If yes, demonstrate by implementing a half adder (Sum and Carry outputs) using multiplexers. If no, explain the limitations and provide reasoning.
