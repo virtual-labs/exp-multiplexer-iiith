@@ -1,59 +1,90 @@
 {
-    "version": 2.0,
-    "questions": [
-        {
-            "question": "1. If input1 (I0) = 1 and input2 (I1) = 0, and select = 1, what is the output of a 2x1 MUX?",
-            "answers": {
-                "a": "1",
-                "b": "0",
-                "c": "Output is degenerated",
-                "d": "Information insufficient"
-            },
-            "correctAnswer": "b",
-            "explanations": {},
-            "difficulty": "beginner"
-        },
-        {
-            "question": "2. How many gates are used in making a 2*1 MUX",
-            "answers": {
-                "a": "4",
-                "b": "3",
-                "c": "2",
-                "d": "1"
-            },
-            "correctAnswer": "a",
-            "explanations": {
-               
-            },
-            "difficulty": "intermediate"
-        },
-        {
-            "question": "3. Why is an nx1 AND gate required in an nx1 MUX ?",
-            "answers": {
-                "a": "To convert n inputs in a single output",
-                "b": "To make sure that each input has the same value",
-                "c": "To convert the input in binary form",
-                "d": "To store the input bits in output bit"
-            },
-            "correctAnswer": "a",
-            "explanations": {
-               
-            },
-            "difficulty": "intermediate"
-        },
-        {
-            "question": "4.How many 2*1 AND gates are required to create a 16*1 AND gate ",
-            "answers": {
-                "a": "15",
-                "b": "2",
-                "c": "8",
-                "d": "1"
-            },
-            "correctAnswer": "a",
-            "explanations": {
-                
-            },
-            "difficulty": "advanced"
-        }
-    ]
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "1. If input1 (I<sub>0</sub>) = 1 and input2 (I<sub>1</sub>) = 0, and select = 1, what is the output of a 2X1 MUX?",
+      "answers": {
+        "a": "1",
+        "b": "0",
+        "c": "Output is degenerated",
+        "d": "Information insufficient"
+      },
+      "correctAnswer": "b",
+      "explanations": {
+        "b": "Correct. In a 2X1 multiplexer, when select = 1, the output follows I<sub>1</sub>. Since I<sub>1</sub> = 0, the output is 0.",
+        "a": "Incorrect. When select = 1, the output follows I<sub>1</sub> (not I<sub>0</sub>), so output = I<sub>1</sub> = 0.",
+        "c": "Incorrect. The output is well-defined based on the select line and input values.",
+        "d": "Incorrect. All necessary information is provided to determine the output."
+      },
+      "difficulty": "beginner"
+    },
+    {
+      "question": "2. How many gates are used in making a 2X1 MUX",
+      "answers": {
+        "a": "4",
+        "b": "3",
+        "c": "2",
+        "d": "1"
+      },
+      "correctAnswer": "a",
+      "explanations": {
+        "a": "Correct. A 2X1 MUX requires 4 gates: 1 NOT gate (for S'), 2 AND gates (for I<sub>0</sub>·S' and I<sub>1</sub>·S), and 1 OR gate (to combine outputs).",
+        "b": "Incorrect. Three gates are insufficient to implement a complete 2X1 multiplexer with proper select logic.",
+        "c": "Incorrect. Two gates cannot provide the necessary logic for input selection and output combination.",
+        "d": "Incorrect. One gate cannot implement the complex logic required for a multiplexer."
+      },
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "3. Why is an nX1 OR gate required in an nX1 MUX ?",
+      "answers": {
+        "a": "To convert n inputs in a single output",
+        "b": "To make sure that each input has the same value",
+        "c": "To convert the input in binary form",
+        "d": "To store the input bits in output bit"
+      },
+      "correctAnswer": "a",
+      "explanations": {
+        "a": "Correct. The nX1 OR gate combines all the AND gate outputs to produce a single output, effectively selecting one of the n inputs based on the select lines.",
+        "b": "Incorrect. The OR gate does not ensure input value uniformity; it combines selected outputs.",
+        "c": "Incorrect. The OR gate does not perform binary conversion; inputs are already in binary form.",
+        "d": "Incorrect. The OR gate does not store bits; it performs logical combination of inputs."
+      },
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "4. How many 2X1 MUXes are required to create a 16X1 MUX ?",
+      "answers": {
+        "a": "15",
+        "b": "2",
+        "c": "8",
+        "d": "1"
+      },
+      "correctAnswer": "a",
+      "explanations": {
+        "a": "Correct. To build a 16X1 MUX using 2X1 MUXes: 8 MUXes in first stage (for 16→8), 4 MUXes in second stage (for 8→4), 2 MUXes in third stage (for 4→2), and 1 MUX in final stage (for 2→1). Total = 8+4+2+1 = 15.",
+        "b": "Incorrect. Two 2X1 MUXes can only create a 4X1 MUX, not a 16X1 MUX.",
+        "c": "Incorrect. Eight 2X1 MUXes can only handle the first stage of reduction from 16 inputs to 8 outputs.",
+        "d": "Incorrect. One 2X1 MUX cannot handle 16 inputs; it can only select between 2 inputs."
+      },
+      "difficulty": "advanced"
+    },
+    {
+      "question": "5. In a 4X1 multiplexer, how many select lines are required:",
+      "answers": {
+        "a": "1",
+        "b": "2",
+        "c": "3",
+        "d": "4"
+      },
+      "correctAnswer": "b",
+      "explanations": {
+        "b": "Correct. A 4X1 multiplexer requires 2 select lines because 2² = 4, allowing selection among 4 inputs using binary combinations 00, 01, 10, 11.",
+        "a": "Incorrect. One select line can only distinguish between 2 inputs (2¹ = 2), not 4 inputs.",
+        "c": "Incorrect. Three select lines would be needed for an 8X1 multiplexer (2³ = 8), which is more than required.",
+        "d": "Incorrect. Four select lines would be needed for a 16X1 multiplexer (2⁴ = 16), which is excessive for a 4X1 MUX."
+      },
+      "difficulty": "beginner"
+    }
+  ]
 }

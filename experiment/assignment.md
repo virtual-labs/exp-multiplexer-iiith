@@ -1,5 +1,17 @@
-1) Design 2:1, 4:1 and 8:1 multiplexers by referring the theory section. Save these circuits separately so that they can be imported and used for designing other things.
+1. Design a 2X1 multiplexer circuit using basic logic gates. The circuit should take 3 inputs (A, B, and Select) and produce 1 output (Z). Implement the logic equation Z = (A · S') + (B · S) using AND, OR, and NOT gates. Verify your implementation by testing all possible input combinations.
 
-2) Import two 4:1 multiplexers designed in 1st part and implement a Half adder circuit using these multiplexers. One mux will generate SUM (A ex-or B) and another mux will generate Carry (A.B). Now Implement the same using two 2:1 multiplexers. (Hint: choose any one out of A and B as the select bit for multiplexers).
+2. Construct a 4X1 multiplexer using three 2X1 multiplexers. Given four data inputs I₃I₂I₁I₀ and two select inputs S₁S₀, the circuit should output Y based on the select code. Verify that:
 
-3) Import two 4:1 multiplexers designed in 1st question and design a 8:1 mux using them. You can use additional hardware to choose between the outputs of the two multiplexers. (Hint: Use 1 of the three select bits s2s1s0 as enable input for one of the 4:1 mux and its compliment for the other mux). 
+   - When S₁S₀ = 00, Output = I₀
+   - When S₁S₀ = 01, Output = I₁
+   - When S₁S₀ = 10, Output = I₂
+   - When S₁S₀ = 11, Output = I₃
+
+3. **Theoretical Exercise**: Design an 8X1 multiplexer using hierarchical approach. Draw the block diagram showing how two 4X1 multiplexers and one 2X1 multiplexer can be connected to create an 8X1 multiplexer. Explain the role of each select line (S₂, S₁, S₀) in the circuit operation. (Note: Implementation not possible in current simulation due to I/O limitations)
+
+4. **Theoretical Exercise**: Analyze how multiplexers can implement Boolean functions. Consider a 2-variable Boolean function f(A,B). Explain how a 4X1 multiplexer can be used to implement any 2-variable Boolean function by:
+   - Using A and B as select lines
+   - Connecting appropriate constants (0 or 1) or variables to the data inputs
+   - Provide the truth table approach for implementing f(A,B) = A ⊕ B (XOR function)
+
+**Note**: Questions 3 and 4 are theoretical exercises designed to enhance understanding of multiplexer applications beyond the current simulation capabilities.
