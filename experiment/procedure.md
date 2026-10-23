@@ -37,9 +37,9 @@ _Figure 1: 2X1 Multiplexer circuit diagram showing basic logic implementation wi
 
 #### Circuit Diagram
 
-<img src="images/multiplexer.gif" alt="4X1 Multiplexer Circuit Diagram">
+<img src="images/4x1-mux-using-2x1-mux.svg" alt="4X1 Multiplexer built from three 2X1 Multiplexers">
 
-_Figure 2: 4X1 Multiplexer circuit diagram showing hierarchical construction using three 2X1 multiplexers with select line control. Reference: Theory section_
+_Figure 2: 4X1 Multiplexer built from three 2X1 multiplexers. S<sub>0</sub> controls the first two multiplexers and S<sub>1</sub> controls the last one. Reference: Theory section_
 
 #### Components Required
 
