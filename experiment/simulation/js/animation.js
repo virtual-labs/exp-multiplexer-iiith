@@ -30,10 +30,11 @@ const observ = document.getElementById("observations");
 const speed = document.getElementById("speed");
 
 // global varaibles declared here
+// input 0 is at the top (its AND gate gets the inverted select line), input 1 is at the bottom
 const objects = [
-    document.getElementById("input1"),
-    document.getElementById("select"),
     document.getElementById("input0"),
+    document.getElementById("select"),
+    document.getElementById("input1"),
     document.getElementById("output")
 ];
 const textInput = [
@@ -50,9 +51,9 @@ const dots = [
     document.createElementNS(svgns, "circle"),
     document.createElementNS(svgns, "circle")
 ];
-// First dot emerges from input 1
+// First dot emerges from input 0
 // Next 2 dots emerge from select
-// Next dot emerges from input 2
+// Next dot emerges from input 1
 
 
 
@@ -138,31 +139,69 @@ function allDisappear() {
     }
 }
 
-function appendInput1() {
-    if (textInput[0].textContent !== "0" && timeline.progress() === 0) {
+// returns true if the inputs can be changed; a finished simulation is rewound so that new inputs can be tried
+function inputsEditable() {
+    if (timeline.progress() === 1) {
+        rewind();
+    }
+    if (timeline.progress() !== 0) {
+        observ.innerHTML = "Inputs cannot be changed while the simulation is running. Please click on Reset to change them.";
+        return false;
+    }
+    return true;
+}
+
+// colours the dots of every input as per the value of that input
+function inputDotColours() {
+    setter(textInput[0].textContent, dots[0]);
+    for (let i = 1; i < 3; i++) {
+        setter(textInput[1].textContent, dots[i]);
+    }
+    setter(textInput[2].textContent, dots[3]);
+}
+
+// sets all the inputs to 0 so that the simulation can be started right away
+function initInputs() {
+    textIOInit();
+    appendInput0();
+    appendSelect();
+    appendInput1();
+}
+
+function appendInput0() {
+    if (!inputsEditable()) {
+        return;
+    }
+    if (textInput[0].textContent !== "0") {
         changeto0(16, 24, 0, 0);
     }
-    else if (textInput[0].textContent !== "1" && timeline.progress() === 0) {
+    else {
         changeto1(16, 24, 0, 0);
     }
     setter(textInput[0].textContent, dots[0]);
 }
 function appendSelect() {
-    if (textInput[1].textContent !== "0" && timeline.progress() === 0) {
+    if (!inputsEditable()) {
+        return;
+    }
+    if (textInput[1].textContent !== "0") {
         changeto0(16, 394, 1, 1);
     }
-    else if (textInput[1].textContent !== "1" && timeline.progress() === 0) {
+    else {
         changeto1(16, 394, 1, 1);
     }
     for (let i = 1; i < 3; i++) {
         setter(textInput[1].textContent, dots[i]);
     }
 }
-function appendInput0() {
-    if (textInput[2].textContent !== "0" && timeline.progress() === 0) {
+function appendInput1() {
+    if (!inputsEditable()) {
+        return;
+    }
+    if (textInput[2].textContent !== "0") {
         changeto0(16, 764, 2, 2);
     }
-    else if (textInput[2].textContent !== "1" && timeline.progress() === 0) {
+    else {
         changeto1(16, 764, 2, 2);
     }
     setter(textInput[2].textContent, dots[3]);
@@ -186,25 +225,28 @@ function changeto0(coordinateX, coordinateY, object, textObject) {
     objectAppear(textInput[textObject]);
 }
 let not = "0";
-let or1 = "0";
-let or2 = "0";
-let and = "0";
+let and1 = "0";
+let and2 = "0";
+let or = "0";
 
+// NOT gate inverts the select line
 function stage1() {
     not = textInput[1].textContent === "1" ? "0" : "1";
     setter(not, dots[1]);
 }
+// upper AND gate: input 0 AND (NOT select), lower AND gate: input 1 AND select
 function stage2() {
-    or1 = calculateOr(textInput[0].textContent, not);
-    or2 = calculateOr(textInput[2].textContent, textInput[1].textContent);
-    setter(or1, dots[0]);
-    setter(or2, dots[3]);
+    and1 = calculateAnd(textInput[0].textContent, not);
+    and2 = calculateAnd(textInput[2].textContent, textInput[1].textContent);
+    setter(and1, dots[0]);
+    setter(and2, dots[3]);
     objectDisappear(dots[1]);
     objectDisappear(dots[2]);
 }
+// OR gate combines the outputs of the two AND gates
 function stage3() {
-    and = calculateAnd(or1, or2);
-    setter(and, dots[0]);
+    or = calculateOr(and1, and2);
+    setter(or, dots[0]);
     objectDisappear(dots[3]);
 }
 
@@ -212,18 +254,27 @@ function stage3() {
 
 function outputSetter() {
     inputDotDisappear();
-    textOutput[0].textContent = and;
+    textOutput[0].textContent = or;
     setter(textOutput[0].textContent, objects[3]);
 }
 
 function display() {
-    observ.innerHTML = " Simulation has finished. Please click on Reset and repeat the instructions given to start again.";
+    decide = false;
+    status.innerHTML = "Start";
+    const selected = textInput[1].textContent === "1" ? "INPUT 1" : "INPUT 0";
+    observ.innerHTML = `Simulation has finished.<br>SELECT = ${textInput[1].textContent}, so OUTPUT = ${selected} = ${textOutput[0].textContent}<br>Click on an input to change it and then click on Start to simulate again.`;
 }
 
-function reboot() {
-    for (const text of textInput) {
-        text.textContent = 2;
-    }
+// takes the timeline back to the beginning while keeping the selected input values
+function rewind() {
+    timeline.seek(0);
+    timeline.pause();
+    inputDotDisappear();
+    inputDotColours();
+    outputDisappear();
+    fillColor(objects[3], "#008000");
+    decide = false;
+    status.innerHTML = "Start";
 }
 
 function setter(value, component) {
@@ -236,8 +287,8 @@ function setter(value, component) {
 }
 
 function setSpeed(speed) {
+    timeline.timeScale(parseInt(speed));
     if (circuitStarted) {
-        timeline.timeScale(parseInt(speed));
         observ.innerHTML = `${speed}x speed`;
     }
 }
@@ -249,12 +300,12 @@ function restartCircuit() {
     timeline.seek(0);
     timeline.pause();
     allDisappear();
-    reboot();
-    clearObservation();
+    initInputs();
     decide = false;
     status.innerHTML = "Start";
     observ.innerHTML = "Successfully restored";
     speed.selectedIndex = 0;
+    timeline.timeScale(1);
 }
 
 function simulationStatus() {
@@ -271,7 +322,6 @@ function stopCircuit() {
         observ.innerHTML = "Simulation has been Paused. Please click on the 'Start' button to Resume.";
         decide = false;
         status.innerHTML = "Start";
-        speed.selectedIndex = 0;
     }
     else if (timeline.progress() === 1) {
         observ.innerHTML = "Please Restart the simulation";
@@ -284,16 +334,18 @@ function startCircuit() {
             return;
         }
     }
+    if (timeline.progress() === 1) {
+        rewind();
+    }
     if (timeline.progress() !== 1) {
         if (!circuitStarted) {
             circuitStarted = true;
         }
         timeline.play();
-        timeline.timeScale(1);
+        timeline.timeScale(parseInt(speed.value));
         observ.innerHTML = "Simulation has started.";
         decide = true;
         status.innerHTML = "Pause";
-        speed.selectedIndex = 0;
     }
     else if (timeline.progress() === 1) {
         observ.innerHTML = "Please Restart the simulation";
@@ -318,7 +370,6 @@ timeline.add(stage2, 12.5);
 timeline.add(stage3, 20);
 timeline.add(outputSetter, 25);
 timeline.add(outputVisible, 25);
-timeline.eventCallback("onComplete", outputVisible);
 timeline.eventCallback("onComplete", display);
 
 timeline.to(dots[0], {
@@ -406,3 +457,4 @@ timeline.to(dots[0], {
 
 timeline.pause();
 inputDotDisappear();
+initInputs();

@@ -6,7 +6,7 @@ An electronic multiplexer can be considered as a multiple-input, single-output s
 
 <img src="images/2X1mux.jpg">
 
-A 2-to-1 multiplexer is the simplest form of multiplexer that selects one of two input data lines and forwards it to the output based on a single select line. It consists of two data inputs (I<sub>0</sub> and I<sub>1</sub>), one select input (S), and one output (Z).
+A 2-to-1 multiplexer is the simplest form of multiplexer that selects one of two input data lines and forwards it to the output based on a single select line. It consists of two data inputs (I<sub>0</sub> and I<sub>1</sub>, also called A and B), one select input (S), and one output (Z, labelled C in the figure).
 
 #### Principle of Operation
 
@@ -20,8 +20,8 @@ A 2-to-1 multiplexer has a boolean equation where A and B are the two inputs, S 
 
 This equation shows that:
 
-- When S = 0: Z = A (since S' = 1 and the first term dominates)
-- When S = 1: Z = B (since S = 1 and the second term dominates)
+- When S = 0: Z = A (since S' = 1, the first term equals A, and the second term B · S is 0)
+- When S = 1: Z = B (since S' = 0, the first term A · S' is 0, and the second term equals B)
 
 #### Key Features
 
@@ -41,7 +41,7 @@ This equation shows that:
 | 0   | 1   | 1   | 1   |
 | 1   | 0   | 0   | 0   |
 | 1   | 0   | 1   | 1   |
-| 1   | 1   | 0   | 1   |
+| 1   | 1   | 0   | 0   |
 | 1   | 1   | 1   | 1   |
 
 #### Applications
@@ -57,6 +57,8 @@ This equation shows that:
 <img src="images/multiplexer.gif">
 
 A 4-to-1 multiplexer selects one of four input data lines and forwards it to the output based on two select lines. It consists of four data inputs (I<sub>0</sub>, I<sub>1</sub>, I<sub>2</sub>, I<sub>3</sub>), two select inputs (S<sub>1</sub>, S<sub>0</sub>), and one output (Y). This is a more complex multiplexer that demonstrates the scalability of multiplexer design.
+
+The figure above shows the gate-level (AND-OR) circuit of a 4-to-1 multiplexer. In the figure, the data inputs are labelled C0 to C3 (I<sub>0</sub> to I<sub>3</sub>), the select lines are labelled A and B (A is the more significant select line S<sub>1</sub>, and B is S<sub>0</sub>), and the output is labelled f(A,B,C) (Y).
 
 #### Principle of Operation
 
@@ -99,10 +101,21 @@ This equation shows that only one input is selected at a time based on the selec
 
 **Note:** x represents "don't care" conditions - the value can be either 0 or 1 without affecting the output.
 
+#### 4 X 1 Multiplexer using 2 X 1 Multiplexers
+
+<img src="images/4x1-mux-using-2x1-mux.svg" alt="4 X 1 Multiplexer built from three 2 X 1 Multiplexers">
+
+A 4-to-1 multiplexer can also be built from three 2-to-1 multiplexers, as in the Practice task:
+
+- The first 2-to-1 multiplexer selects between I<sub>0</sub> and I<sub>1</sub>, and the second selects between I<sub>2</sub> and I<sub>3</sub>. Both are controlled by the less significant select line S<sub>0</sub>.
+- The third 2-to-1 multiplexer selects between the outputs of the first two, and is controlled by the more significant select line S<sub>1</sub>.
+
+For example, when S<sub>1</sub>S<sub>0</sub> = 10, the first two multiplexers pass I<sub>0</sub> and I<sub>2</sub>, and the third multiplexer passes the output of the second one, so Y = I<sub>2</sub>. This gives the same equation and truth table as the gate-level circuit.
+
 #### Applications
 
 - **Data Path Selection**: Choosing between multiple data sources in processors
-- **Memory Address Decoding**: Selecting memory banks or registers
+- **Memory Addressing**: Sending the row address and the column address of a DRAM over the same address pins one after the other
 - **Communication Systems**: Time-division multiplexing for efficient data transmission
 - **Arithmetic Logic Units (ALUs)**: Selecting different operational inputs
 - **Digital Signal Processing**: Routing signals in DSP systems
@@ -136,4 +149,5 @@ For an 8X1 multiplexer using 4X1 units:
 | Data Flow    | Convergent                  | Divergent                             |
 | Applications | Data selection, routing     | Data distribution, decoding           |
 | Common Uses  | Input selection, data paths | Address decoding, signal distribution |
-| Relationship | Encoder-like behavior       | Decoder-like behavior                 |
+| Select lines | Choose which input reaches the output | Choose which output receives the input |
+| Relationship | Can implement any Boolean function of its select lines | Equivalent to a decoder with an enable input |
