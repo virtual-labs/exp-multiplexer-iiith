@@ -88,7 +88,7 @@ export function fourBitMultiplexerTest(i0, i1, i2, i3, s1, s0, OutputFinal) // I
     let inputS0 = gates_list[s0];
     let inputS1 = gates_list[s1];
     let dataTable = '';
-    let head = '<tr><th colspan="2">Select</th><th colspan="2">Output</th></tr><tr><th>S0</th><th>S1</th><th>Expected</th><th>Observed</th>';
+    let head = '<tr><th colspan="2">Select</th><th colspan="2">Output</th></tr><tr><th>S1</th><th>S0</th><th>Expected</th><th>Observed</th></tr>';
     document.getElementById("table-head").innerHTML = head;
     let circuitIsCorrect = true;
 
@@ -158,14 +158,15 @@ export function fourBitMultiplexerTest(i0, i1, i2, i3, s1, s0, OutputFinal) // I
 
     let className = "";
 
+    // rows in the order S1 S0 = 00, 01, 10, 11 (cntXY and outputNameXY are indexed as S0 S1)
     className = cnt00 === true ? "success-table" : "failure-table";
-    dataTable += `<tr class="bold-table"><th>0</th><th>0</th><th> I0 </th><td class="${className}">${outputName00}</td></tr>`;
+    dataTable += `<tr class="bold-table"><th>0</th><th>0</th><td> I0 </td><td class="${className}">${outputName00}</td></tr>`;
     className = cnt10 === true ? "success-table" : "failure-table";
-    dataTable += `<tr class="bold-table"><th>1</th><th>0</th><th> I1 </th><td class="${className}">${outputName10}</td></tr>`;
-    className = cnt11 === true ? "success-table" : "failure-table";
-    dataTable += `<tr class="bold-table"><th>1</th><th>1</th><th> I3 </th><td class="${className}">${outputName11}</td></tr>`;
+    dataTable += `<tr class="bold-table"><th>0</th><th>1</th><td> I1 </td><td class="${className}">${outputName10}</td></tr>`;
     className = cnt01 === true ? "success-table" : "failure-table";
-    dataTable += `<tr class="bold-table"><th>0</th><th>1</th><th> I2 </th><td class="${className}">${outputName01}</td></tr>`;
+    dataTable += `<tr class="bold-table"><th>1</th><th>0</th><td> I2 </td><td class="${className}">${outputName01}</td></tr>`;
+    className = cnt11 === true ? "success-table" : "failure-table";
+    dataTable += `<tr class="bold-table"><th>1</th><th>1</th><td> I3 </td><td class="${className}">${outputName11}</td></tr>`;
 
     const table_elem = document.getElementById('table-body');
     table_elem.insertAdjacentHTML('beforeend', dataTable);

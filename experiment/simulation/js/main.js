@@ -58,6 +58,67 @@ jsPlumbInstance.bind("connection", function (info) {
   }
 });
 
+// Removes a single occurrence of item from list
+function removeOne(list, item) {
+  const index = list.indexOf(item);
+  if (index !== -1) {
+    list.splice(index, 1);
+  }
+}
+
+// Returns the id of the label overlay of an endpoint (a0, b0, s0 or finalOutput for multiplexers)
+function endpointLabel(endpoint) {
+  const keys = Object.keys(endpoint.overlays || {});
+  return keys.length > 0 ? keys[0] : "";
+}
+
+// Removes the link between the components of two endpoints from the circuit model
+function removeLink(epA, epB) {
+  if (!epA || !epB || !epA.uuid || !epB.uuid) {
+    return;
+  }
+  let outEp = epA;
+  let inEp = epB;
+  if (epA.uuid.startsWith("input")) {
+    outEp = epB;
+    inEp = epA;
+  }
+  if (!outEp.uuid.startsWith("output") || !inEp.uuid.startsWith("input")) {
+    return;
+  }
+  const driver = gatejs.gates[outEp.elementId] || multiplexerjs.multiplexer[outEp.elementId];
+  const sink = gatejs.gates[inEp.elementId] || multiplexerjs.multiplexer[inEp.elementId];
+  if (!driver || !sink) {
+    return;
+  }
+
+  removeOne(driver.outputs, sink);
+  if (driver.outputs.length === 0) {
+    driver.setConnected(false);
+  }
+
+  if (sink instanceof multiplexerjs.Multiplexer) {
+    const label = endpointLabel(inEp);
+    if (label.includes("a")) {
+      sink.setA0([]);
+    } else if (label.includes("b")) {
+      sink.setB0([]);
+    } else if (label.includes("s0")) {
+      sink.setSelectLine([]);
+    }
+  } else {
+    removeOne(sink.inputs, driver);
+    if (sink.isOutput && multiplexerjs.finalOutputs[sink.id]) {
+      multiplexerjs.finalOutputs[sink.id] = [];
+    }
+  }
+}
+
+// Keep the circuit model in sync when a wire is deleted
+jsPlumbInstance.bind("connection:detach", function (info) {
+  removeLink(info.sourceEndpoint, info.targetEndpoint);
+});
+
 export const connectGate = function () {
   jsPlumbInstance.bind("beforeDrop", function (data) {
     let fromEndpoint = data.connection.endpoints[0];
@@ -667,172 +728,6 @@ menuOption.addEventListener("click", (e) => {
       let deletionMethod = "none";
       let errorLog = [];
 
-      // Enhanced state validation function
-      const validateComponentState = (componentId, componentType) => {
-        try {
-          if (componentType === "multiplexer") {
-            const mux = multiplexerjs.multiplexer[componentId];
-            if (mux) {
-              console.log(`Multiplexer ${componentId} state:`, {
-                connected: mux.isConnected || false,
-                outputs: mux.outputs ? mux.outputs.length : 0,
-                a0: mux.a0,
-                b0: mux.b0,
-                selectLine: mux.selectLine,
-              });
-              return true;
-            }
-          } else if (componentType === "gate") {
-            const gate = gatejs.gates[componentId];
-            if (gate) {
-              console.log(`Gate ${componentId} state:`, {
-                connected: gate.isConnected || false,
-                inputs: gate.inputs ? gate.inputs.length : 0,
-                outputs: gate.outputs ? gate.outputs.length : 0,
-                type: gate.type,
-              });
-              return true;
-            }
-          }
-          return false;
-        } catch (error) {
-          errorLog.push(
-            `State validation error for ${componentId}: ${error.message}`
-          );
-          return false;
-        }
-      };
-
-      // Enhanced connection state cleanup function
-      const cleanupConnectionState = (connection, method) => {
-        try {
-          const sourceId = connection.sourceId;
-          const targetId = connection.targetId;
-
-          console.log(
-            `Cleaning up connection: ${sourceId} -> ${targetId} via ${method}`
-          );
-
-          // Validate components before cleanup
-          const sourceType = sourceId.split("-")[0].toLowerCase();
-          const targetType = targetId.split("-")[0].toLowerCase();
-
-          let stateUpdated = false;
-
-          // Update multiplexer connections with enhanced error checking
-          if (multiplexerjs.multiplexer[sourceId]) {
-            try {
-              validateComponentState(sourceId, "multiplexer");
-              multiplexerjs.multiplexer[sourceId].setConnected(false);
-              const outputs = multiplexerjs.multiplexer[sourceId].outputs;
-              if (outputs && Array.isArray(outputs)) {
-                const targetIndex = outputs.findIndex(
-                  (output) => output && output.id === targetId
-                );
-                if (targetIndex !== -1) {
-                  outputs.splice(targetIndex, 1);
-                  console.log(
-                    `Removed output connection from multiplexer ${sourceId}`
-                  );
-                  stateUpdated = true;
-                }
-              }
-            } catch (error) {
-              errorLog.push(
-                `Multiplexer source cleanup error (${sourceId}): ${error.message}`
-              );
-            }
-          }
-
-          if (multiplexerjs.multiplexer[targetId]) {
-            try {
-              validateComponentState(targetId, "multiplexer");
-              const targetEndpoint = connection.endpoints
-                ? connection.endpoints[1]
-                : null;
-              if (targetEndpoint && targetEndpoint.overlays) {
-                const overlayKey = Object.keys(targetEndpoint.overlays)[0];
-                console.log(
-                  `Resetting multiplexer input via overlay: ${overlayKey}`
-                );
-
-                if (overlayKey && overlayKey.includes("a")) {
-                  multiplexerjs.multiplexer[targetId].setA0([null, ""]);
-                  stateUpdated = true;
-                } else if (overlayKey && overlayKey.includes("b")) {
-                  multiplexerjs.multiplexer[targetId].setB0([null, ""]);
-                  stateUpdated = true;
-                } else if (overlayKey && overlayKey.includes("s0")) {
-                  multiplexerjs.multiplexer[targetId].setS0([null, ""]);
-                  stateUpdated = true;
-                }
-              }
-            } catch (error) {
-              errorLog.push(
-                `Multiplexer target cleanup error (${targetId}): ${error.message}`
-              );
-            }
-          }
-
-          // Update gate connections with enhanced error checking
-          if (gatejs.gates[sourceId]) {
-            try {
-              validateComponentState(sourceId, "gate");
-              gatejs.gates[sourceId].setConnected(false);
-              const outputs = gatejs.gates[sourceId].outputs;
-              if (outputs && Array.isArray(outputs)) {
-                const targetIndex = outputs.findIndex(
-                  (output) => output && output.id === targetId
-                );
-                if (targetIndex !== -1) {
-                  outputs.splice(targetIndex, 1);
-                  console.log(
-                    `Removed output connection from gate ${sourceId}`
-                  );
-                  stateUpdated = true;
-                }
-              }
-            } catch (error) {
-              errorLog.push(
-                `Gate source cleanup error (${sourceId}): ${error.message}`
-              );
-            }
-          }
-
-          if (gatejs.gates[targetId]) {
-            try {
-              validateComponentState(targetId, "gate");
-              const inputs = gatejs.gates[targetId].inputs;
-              if (inputs && Array.isArray(inputs)) {
-                const sourceIndex = inputs.findIndex(
-                  (input) => input && input.id === sourceId
-                );
-                if (sourceIndex !== -1) {
-                  inputs.splice(sourceIndex, 1);
-                  console.log(`Removed input connection from gate ${targetId}`);
-                  stateUpdated = true;
-                }
-              }
-            } catch (error) {
-              errorLog.push(
-                `Gate target cleanup error (${targetId}): ${error.message}`
-              );
-            }
-          }
-
-          if (!stateUpdated) {
-            console.warn(
-              `No state updates performed for connection ${sourceId} -> ${targetId}`
-            );
-          }
-
-          return stateUpdated;
-        } catch (error) {
-          errorLog.push(`Connection cleanup error: ${error.message}`);
-          return false;
-        }
-      };
-
       // Try to delete connection that was right-clicked with enhanced error handling
       if (window.isConnectionContext && window.contextMenuTarget) {
         const connectorElement =
@@ -865,12 +760,6 @@ menuOption.addEventListener("click", (e) => {
                         ? connection.endpoints.length
                         : 0,
                     });
-
-                    // Enhanced state cleanup
-                    const stateCleanupSuccess = cleanupConnectionState(
-                      connection,
-                      "Method 1"
-                    );
 
                     try {
                       jsPlumbInstance.deleteConnection(connection);
@@ -939,12 +828,6 @@ menuOption.addEventListener("click", (e) => {
                       sourceId: connection.sourceId,
                       targetId: connection.targetId,
                     }
-                  );
-
-                  // Enhanced state cleanup
-                  const stateCleanupSuccess = cleanupConnectionState(
-                    connection,
-                    "Method 2"
                   );
 
                   try {
@@ -1069,12 +952,6 @@ menuOption.addEventListener("click", (e) => {
                         targetId: connection.targetId,
                       });
 
-                      // Enhanced state cleanup
-                      const stateCleanupSuccess = cleanupConnectionState(
-                        connection,
-                        "Hovered Method 1"
-                      );
-
                       try {
                         jsPlumbInstance.deleteConnection(connection);
                         connectionDeleted = true;
@@ -1114,12 +991,6 @@ menuOption.addEventListener("click", (e) => {
                         sourceId: connection.sourceId,
                         targetId: connection.targetId,
                       }
-                    );
-
-                    // Enhanced state cleanup
-                    const stateCleanupSuccess = cleanupConnectionState(
-                      connection,
-                      "Hovered Method 2"
                     );
 
                     try {

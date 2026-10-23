@@ -48,7 +48,10 @@
 							<li>You can delete components by right clicking on them and selecting the delete option.
 							</li>
 							<li>You can set the input bits, which are by default 1, to any values of your choice for
-								testing, by double-clicking on them.</li>
+								testing, by clicking on them. Each click toggles the bit between 1 and 0.</li>
+							<li>A single output point can drive several inputs: drag a new wire from an output point that
+								is already connected to connect it to another component.</li>
+							<li>To delete a wire, right click on it and select the delete option.</li>
 							<li>Click on the "Simulate" button after setting the input bits as per your choice. This
 								will simulate the circuit you built for the input bits set and will change the output
 								bit values accordingly, for you to test your circuit.</li>
@@ -56,7 +59,8 @@
 								required circuit.</li>
 							<li>Clicking on "Submit" will display a "Success" or "Failure" message in the Observations
 								Section according to the correctness of your circuit. It will also display a Truth Table
-								verifying your circuit for different input values.</li>
+								verifying your circuit for all input values. The truth table is shown only when every
+								component is connected.</li>
 						</ul>
 					</div>
 				</div>
@@ -71,10 +75,6 @@
 					<div class="component-button and" onclick="addGate(event)">AND</div>
 					<div class="component-button or" onclick="addGate(event)">OR</div>
 					<div class="component-button not" onclick="addGate(event)">NOT</div>
-					<div class="component-button nand" onclick="addGate(event)">NAND</div>
-					<div class="component-button nor" onclick="addGate(event)">NOR</div>
-					<div class="component-button xor" onclick="addGate(event)">XOR</div>
-					<div class="component-button xnor" onclick="addGate(event)">XNOR</div>
 				</div>
 			</div>
 		</div>

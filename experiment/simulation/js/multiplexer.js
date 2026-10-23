@@ -1,6 +1,6 @@
 import { registerGate, jsPlumbInstance } from "./main.js";
 import { setPosition } from "./layout.js";
-import { clearResult, gates, printErrors } from "./gate.js";
+import { clearMessage, gates, printErrors, showTimedMessage } from "./gate.js";
 import { computeAnd, computeOr } from "./validator.js";
 'use strict';
 // let fullAdder = {}
@@ -191,7 +191,7 @@ export function checkConnectionsMux() {
 }
 
 export function simulateMux() {
-    clearResult();
+    clearMessage();
     if (!checkConnectionsMux()) {
         return;
     }
@@ -229,11 +229,7 @@ export function simulateMux() {
     }
 
     // Displays message confirming Simulation completion
-    let message = "Simulation has finished";
-    const result = document.getElementById('result');
-    result.innerHTML += message;
-    result.className = "success-message";
-    setTimeout(clearResult, 2000);
+    showTimedMessage("Simulation has finished");
 }
 
 export function testSimulationMux(mux, gates) {
@@ -278,13 +274,13 @@ export function deleteMux(id) {
             continue;
         }
         if (multiplexer[key].a0[0] === mux) {
-            multiplexer[key].a0 = null;
+            multiplexer[key].a0 = [];
         }
         if (multiplexer[key].b0[0] === mux) {
-            multiplexer[key].b0 = null;
+            multiplexer[key].b0 = [];
         }
         if (multiplexer[key].selectLine[0] === mux) {
-            multiplexer[key].selectLine = null;
+            multiplexer[key].selectLine = [];
         }
         if (multiplexer[key].outputs.includes(mux)) {
             multiplexer[key].removeOutput(mux);
@@ -293,7 +289,7 @@ export function deleteMux(id) {
 
     for (let key in finalOutputs) {
         if (finalOutputs[key][0] === mux) {
-            delete finalOutputs[key];
+            finalOutputs[key] = [];
             gates[key].inputs = [];
         }
     }
